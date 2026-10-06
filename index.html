@@ -485,9 +485,10 @@ const SESS = (function(){
 const BUF = []; let bufT = null;
 function sendMetrics(row){
   if (CONFIG.mode!=="live" || !CFG.metrics) return;
-  BUF.push(row); clearTimeout(bufT);
-  const flush = ()=>{ if (!BUF.length) return; const body = JSON.stringify(BUF.splice(0)); try{ if (!(navigator.sendBeacon && navigator.sendBeacon(CFG.metrics+"/e", body))) fetch(CFG.metrics+"/e",{method:"POST",body,keepalive:true,mode:"no-cors"}); }catch(e){} };
-  if (["paid","pay_click","quiz_complete","report_view"].includes(row.ev)) flush(); else bufT = setTimeout(flush, 1500);
+  const r = {}; for (const k in row) if (row[k] != null) r[k] = row[k]; // хоосон талбаргүй, багц жижиг
+  BUF.push(r); clearTimeout(bufT);
+  const flush = ()=>{ if (!BUF.length) return; const body = JSON.stringify(BUF.splice(0, 20)); try{ if (!(navigator.sendBeacon && navigator.sendBeacon(CFG.metrics+"/e", body))) fetch(CFG.metrics+"/e",{method:"POST",body,keepalive:true,mode:"no-cors"}); }catch(e){} if (BUF.length) flush(); };
+  if (BUF.length >= 12 || ["paid","pay_click","quiz_complete","report_view","paywall_view"].includes(row.ev)) flush(); else bufT = setTimeout(flush, 1500);
   if (!sendMetrics._bound){ sendMetrics._bound = 1; addEventListener("pagehide", flush); document.addEventListener("visibilitychange", ()=>{ if (document.visibilityState==="hidden") flush(); }); }
 }
 const LOG = [];
