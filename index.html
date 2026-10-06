@@ -748,7 +748,7 @@ function renderReport({content:C, summary:M, token}){
     </div>
     ${M.cond.length?`<div style="display:grid;gap:12px"><h3>Таны сэрлийг унтраадаг зүйлс, хүчтэйгээс нь</h3><ol class="do">${M.cond.filter(i=>Q[i]).map(i=>`<li><b>${esc(Q[i].s)}</b><br><span class="small muted">${THEMES[Q[i].t].name}</span></li>`).join("")}</ol></div>`:""}
     <div style="display:grid;gap:8px"><div class="eyebrow">Таны дур хүслийн хэв маяг</div><h3>${esc(dt.n)}</h3><p class="muted">${esc(dt.d)}</p></div>
-    ${order.map(o=>`<div class="tsec"><span class="lvl ${cls(o.t,o.s)}">${o.s===null?"Тодорхойгүй":lab[cls(o.t,o.s)]}</span><h3>${THEMES[o.t].name}</h3><p class="muted">${o.s===null?"Энэ сэдвийн асуултуудад хангалттай хариулт өгөөгүй тул дүгнэлт гаргасангүй.":esc(cls(o.t,o.s)==="lo"?C.themes[o.t].lo:C.themes[o.t].hi)}</p></div>`).join("")}
+    ${order.map(o=>`<div class="tsec"><span class="lvl ${cls(o.t,o.s)}">${o.s===null?"Тодорхойгүй":lab[cls(o.t,o.s)]}</span><h3>${THEMES[o.t].name}</h3><p class="muted">${o.s===null?"Энэ сэдвийн асуултуудад хангалттай хариулт өгөөгүй тул дүгнэлт гаргасангүй.":esc(o.t==="acc" ? (o.s>=1.5 ? C.themes.acc.hi : C.themes.acc.lo) : (cls(o.t,o.s)==="lo" ? C.themes[o.t].lo : C.themes[o.t].hi))}</p></div>`).join("")}
     <div style="display:grid;gap:14px"><h3>Хамтрагчдаа хэлэх 3 өгүүлбэр</h3>${says.map(s=>`<p class="quote">${esc(s)}</p>`).join("")}</div>
     <div style="display:grid;gap:12px"><h3>Энэ 7 хоногт турших 2 алхам</h3><ol class="do">${steps.map(s=>`<li>${esc(s)}</li>`).join("")}</ol></div>
     ${M.safe?`<div class="safe"><b>Хил хязгаарын тухай</b><p class="small">${esc(C.safe)}</p></div>`:""}
