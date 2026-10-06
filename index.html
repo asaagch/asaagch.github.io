@@ -338,7 +338,7 @@ ol.do{margin:0;padding-left:1.2rem;display:grid;gap:10px}
     <div style="display:grid;gap:14px">
       <p id="r-count" style="font-weight:600"></p>
       <div class="locked" id="r-locked"></div>
-      <p class="small muted">Дэлгэрэнгүй тайлан таны хариултаас бүтнэ. Төлбөр орсны дараа шууд нээгдэнэ.</p>
+      <p class="small muted" id="r-paynote"></p>
     </div>
     <div class="card" style="gap:12px">
       <p style="font-weight:600">Найздаа илгээх үү?</p>
@@ -446,17 +446,16 @@ const Q = [
 ];
 const SCALE = ["Хэзээ ч үгүй","Ховор","Заримдаа","Ихэвчлэн","Үргэлж"];
 
-/* Үнэгүй хэсэгт харагдах профайлын товч тайлбар. Урт тайлбар нь серверт. */
-const PROFILES = {
-  easy: {n:"Амархан асдаг", d:"Танд сэрэл амархан төрдөг, бас амархан унтардаггүй."},
-  sens: {n:"Мэдрэмтгий", d:"Танд сэрэл амархан төрдөг ч жижиг зүйлээс амархан унтардаг."},
-  calm: {n:"Тайван гал", d:"Танд сэрэл аажуу төрдөг, бас амархан унтардаггүй."},
-  cond: {n:"Нөхцөл шаарддаг", d:"Таны сэрлийг унтраадаг зүйлс асаадаг зүйлсээс илүү хүчтэй. Тохиромжтой нөхцөлгүй бол хүсэл төрөхөд хэцүү."}
-};
-const HINT = {
-  acc: {hi:"Танд сэрэл амархан төрдөг.", mid:"Тодорхой нөхцөлд сэрэл тань төрдөг.", lo:"Танд сэрэл төрөхөд хугацаа, тохиромжтой нөхцөл хэрэгтэй.", na:"Хангалттай хариулт өгөөгүй."},
-  brk: {hi:"Жижиг зүйл ч таны сэрлийг амархан унтраадаг.", mid:"Зарим зүйл таны сэрлийг унтраадаг.", lo:"Таны сэрэл амархан унтардаггүй.", na:"Хангалттай хариулт өгөөгүй."}
-};
+/* ================== ТЕКСТ ==================
+ * Үр дүнгийн бүх текст content/texts.json-оос build.py-гаар энд орно.
+ * report.* текстүүд энд байхгүй — төлбөрийн дараа серверээс (RC) ирнэ. */
+/*TEXT_START*/const TEXT = {"level.hi": "өндөр", "level.mid": "дунд", "level.lo": "бага", "level.na": "тодорхойгүй", "profile.easy.name": "Амархан асдаг", "profile.easy.short": "Танд сэрэл амархан төрдөг, бас амархан унтардаггүй.", "profile.sens.name": "Мэдрэмтгий", "profile.sens.short": "Танд сэрэл амархан төрдөг ч жижиг зүйлээс амархан унтардаг.", "profile.calm.name": "Тайван гал", "profile.calm.short": "Танд сэрэл аажуу төрдөг, бас амархан унтардаггүй.", "profile.cond.name": "Нөхцөл шаарддаг", "profile.cond.short": "Таны сэрлийг унтраадаг зүйлс асаадаг зүйлсээс илүү хүчтэй. Тохиромжтой нөхцөлгүй бол хүсэл төрөхөд хэцүү.", "hint.acc.hi": "Танд сэрэл амархан төрдөг.", "hint.acc.mid": "Тодорхой нөхцөлд сэрэл тань төрдөг.", "hint.acc.lo": "Танд сэрэл төрөхөд хугацаа, тохиромжтой нөхцөл хэрэгтэй.", "hint.acc.na": "Хангалттай хариулт өгөөгүй.", "hint.brk.hi": "Жижиг зүйл ч таны сэрлийг амархан унтраадаг.", "hint.brk.mid": "Зарим зүйл таны сэрлийг унтраадаг.", "hint.brk.lo": "Таны сэрэл амархан унтардаггүй.", "hint.brk.na": "Хангалттай хариулт өгөөгүй.", "obs.pre.sharp": "Таны хамгийн тод ажиглалт", "obs.pre.curious": "Таны хариулт нэг зүйлийг тод харууллаа. Та үүнийг өөрөө анзаараагүй байж магадгүй.", "obs.faked": "Та таашаал авсан болж дүр эсгэсэн байна. Энэ сард ганц биш удаа. Хамтрагч тань үүнийг жинхэнэ таашаал гэж андуураад, яг тэр зүйлээ дахин дахин давтаж магадгүй.", "obs.tolerate": "Та орондоо өөрт таалагдахгүй зүйлийг дуугүй тэвчжээ. Таны таашаал бусдын ая тухын золиос болох ёсгүй.", "obs.lowdesire": "Та өөрийгөө дур хүсэл багатай гэж боддог байж магадгүй. Гэтэл хариулт тань өөр зүйл харууллаа: таны дур хүсэл бага биш. Харин түүнийг унтраадаг зүйлс асаадаг зүйлсээс нь олон байна.", "obs.stress": "Таны бие сэрэл авахаасаа өмнө стресст боологдож байна. Стресс хаалгаа хаасан үед ямар ч хүрэлт таашаал болж хүрч чадахгүй.", "obs.mismatch": "Бие тань сэрээд байхад сэтгэл тань огт хүсэхгүй байсан. Энэ хоёр зөрөхөд аль мэдрэмждээ итгэхээ ихэнх хүн мэддэггүй.", "obs.brake_item": "Танд сэрэл төрөх гэж байна. Гэвч «{item}» түүнийг тэр дор нь унтрааж байна.", "obs.acc_quiet": "Таныг асаадаг зүйлс одоогоор чимээгүй байна. Харин юу таныг асааж чадахыг хариулт тань аль хэдийн харуулж байна.", "obs.default": "Таны сэрэл амархан унтардаггүй. Энэ бол давуу тал. Үүнийг яаж бүрэн ашиглахыг тайлан харуулна.", "count.some": "Таны хариултаас {n} нөхцөл илэрлээ. Бүгдийг нь дэлгэрэнгүй тайланд тайлбарлана:", "count.none": "Дэлгэрэнгүй тайланд таны хариултаас бүтсэн:", "locked.top_brake": "Таны сэрлийг хамгийн хүчтэй унтраадаг зүйл", "locked.desire_type": "Дур хүсэл тань аяндаа төрдөг үү, эсвэл эхэлсний дараа төрдөг үү", "locked.sentences": "Хамтрагчдаа хэлэх 3 бэлэн өгүүлбэр", "locked.steps": "Энэ 7 хоногт турших 2 алхам", "paynote": "Дэлгэрэнгүй тайлан таны хариултаас бүтнэ. Төлбөр орсны дараа шууд нээгдэнэ.", "share": "Би «{type}» төрөл гарлаа. Чи аль нь вэ? 5 минутын тест: {url}", "inter8.title": "Таныг юу асааж, юу унтраадаг нь тодорч эхэллээ.", "inter8.brk_leads": "Одоогоор таны сэрлийг унтраадаг зүйлс илүү хүчтэй байна. Дараагийн 8 асуулт яг юу унтрааж байгааг харуулна.", "inter8.acc_leads": "Одоогоор таныг асаадаг зүйлс давамгайлж байна. Дараагийн 8 асуулт юу тэдгээрийг унтрааж болохыг харуулна.", "inter8.unknown": "Дараагийн 8 асуулт таны сэрлийг юу унтрааж байгааг харуулна.", "inter16.title": "Таны хариултаас {n} нөхцөл илэрлээ.", "inter16.none": "Таны хариултын хэв маяг тодорч байна.", "inter16.sub": "Сүүлийн 8 асуулт эдгээр нөхцөл таны таашаалд хэрхэн нөлөөлж байгааг харуулна.", "label.q5": "Хэн нэгэн сонсох вий гэсэн айдас", "label.q6": "«Сайн хийж байна уу?» гэсэн эргэлзээ", "label.q7": "Анхаарал сарних", "label.q8": "Гэр, ажлын бухимдал", "label.q9": "Маргаашийн санаа зоволт", "label.q10": "Ядаргаа", "label.q11": "Сексийг үүрэг мэт мэдрэх", "label.q12": "Стрессээ биеэрээ гаргадаггүй", "label.q13": "Биеэсээ ичих", "label.q14": "Бэлэг эрхтний талаарх санаа зоволт", "label.q15": "Таашаал авах эрхээ мэдрэхгүй", "label.q16": "Толины шүүмжлэл", "label.q18": "Бие ба сэтгэлийн зөрөө", "label.q19": "«Надад гэм байна» гэсэн бодол", "label.q20": "Хүслийн зөрөөний дарамт", "label.q21": "Таашаалын дүр эсгэлт", "label.q22": "Таалагддагаа хэлдэггүй", "label.q23": "Оргазмыг амжилтын хэмжүүр болгох", "label.q24": "Таалагдахгүй зүйлийг тэвчих", "ui.link.title": "Тайлангийн холбоосоо хадгалаарай", "ui.link.desc": "Энэ холбоосоор тайлангаа 30 хоногийн турш хаанаас ч нээнэ.", "ui.link.copy": "Холбоосыг хуулах", "ui.type": "Таны төрөл", "ui.scores": "6 сэдвийн оноо (0–4)", "ui.scores.note": "«Сэрэл төрүүлэгч» өндөр байх нь сайн. Бусад сэдэвт өндөр оноо нь тухайн зүйл таны сэрлийг илүү их унтрааж байгааг харуулна.", "ui.conds": "Таны сэрлийг унтраадаг зүйлс, хүчтэйгээс нь", "ui.desire": "Таны дур хүслийн хэв маяг", "ui.says": "Хамтрагчдаа хэлэх 3 өгүүлбэр", "ui.steps": "Энэ 7 хоногт турших 2 алхам", "ui.safe": "Хил хязгаарын тухай", "ui.tag.hi": "Анхаарах", "ui.tag.mid": "Дунд", "ui.tag.lo": "Хүчтэй тал", "ui.tag.na": "Тодорхойгүй", "ui.nodata": "Энэ сэдвийн асуултуудад хангалттай хариулт өгөөгүй тул дүгнэлт гаргасангүй.", "ui.disclaimer": "Энэ тайлан таны өгсөн хариултын хэв маягийг тайлбарлана. Онош биш, эмчилгээг орлохгүй."};/*TEXT_END*/
+let RC = {};
+const T = (k, v={}) => String(TEXT[k] ?? RC[k] ?? k).replace(/\{(\w+)\}/g, (m,x) => v[x]!=null ? v[x] : m);
+Q.forEach((q,i)=>{ const l = TEXT["label.q"+(i+1)]; if (l) q.s = l; });
+const PROFILE_KEYS = ["easy","sens","calm","cond"];
+const PROFILES = Object.fromEntries(PROFILE_KEYS.map(k=>[k,{ get n(){ return T(`profile.${k}.name`); }, get d(){ return T(`profile.${k}.short`); } }]));
+const HINT = { acc: new Proxy({}, {get:(_,k)=>T("hint.acc."+String(k))}), brk: new Proxy({}, {get:(_,k)=>T("hint.brk."+String(k))}) };
 
 /* ================== ТӨЛӨВ ================== */
 const S = {answers: Array(Q.length).fill(null), idx:0, paid:false, variant:null, invoice:null, shownInter:{}};
@@ -519,7 +518,7 @@ function themeScore(t){
   return v.reduce((a,b)=>a+b,0)/v.length;
 }
 function lvlKey(x){ return x===null ? "na" : x>=2.5 ? "hi" : x>=1.5 ? "mid" : "lo"; }
-const LVL_TXT = {hi:"өндөр", mid:"дунд", lo:"бага", na:"тодорхойгүй"};
+const LVL_TXT = new Proxy({}, {get:(_,k)=>T("level."+String(k))});
 function conditions(){
   return Q.map((q,i)=>({i, q, v:val(i)})).filter(o => o.q.t!=="acc" && !o.q.pattern && o.v!==null && o.v>=3).sort((a,b)=>b.v-a.v);
 }
@@ -534,15 +533,15 @@ function desireKey(){
 }
 function observation(){
   const brk = themeScore("brk") ?? 0, str = themeScore("str") ?? 0;
-  if (val(20)>=3) return "Та таашаал авсан болж дүр эсгэсэн байна. Энэ сард ганц биш удаа. Хамтрагч тань үүнийг жинхэнэ таашаал гэж андуураад, яг тэр зүйлээ дахин дахин давтаж магадгүй.";
-  if (val(23)>=3) return "Та орондоо өөрт таалагдахгүй зүйлийг дуугүй тэвчжээ. Таны таашаал бусдын ая тухын золиос болох ёсгүй.";
-  if (val(18)>=3 && brk>=2) return "Та өөрийгөө дур хүсэл багатай гэж боддог байж магадгүй. Гэтэл хариулт тань өөр зүйл харууллаа: таны дур хүсэл бага биш. Харин түүнийг унтраадаг зүйлс асаадаг зүйлсээс нь олон байна.";
-  if (str>=2.5) return "Таны бие сэрэл авахаасаа өмнө стресст боологдож байна. Стресс хаалгаа хаасан үед ямар ч хүрэлт таашаал болж хүрч чадахгүй.";
-  if (val(17)>=3) return "Бие тань сэрээд байхад сэтгэл тань огт хүсэхгүй байсан. Энэ хоёр зөрөхөд аль мэдрэмждээ итгэхээ ихэнх хүн мэддэггүй.";
+  if (val(20)>=3) return T("obs.faked");
+  if (val(23)>=3) return T("obs.tolerate");
+  if (val(18)>=3 && brk>=2) return T("obs.lowdesire");
+  if (str>=2.5) return T("obs.stress");
+  if (val(17)>=3) return T("obs.mismatch");
   const top = Q.map((q,i)=>({q,v:val(i)})).filter(o=>o.q.t==="brk"&&o.v!==null).sort((x,y)=>y.v-x.v)[0];
-  if (top && top.v>=2) return `Танд сэрэл төрөх гэж байна. Гэвч «${top.q.s.toLowerCase()}» түүнийг тэр дор нь унтрааж байна.`;
-  if ((themeScore("acc")??0) < 1.5) return "Таныг асаадаг зүйлс одоогоор чимээгүй байна. Харин юу таныг асааж чадахыг хариулт тань аль хэдийн харуулж байна.";
-  return "Таны сэрэл амархан унтардаггүй. Энэ бол давуу тал. Үүнийг яаж бүрэн ашиглахыг тайлан харуулна.";
+  if (top && top.v>=2) return T("obs.brake_item", {item: top.q.s.charAt(0).toLowerCase() + top.q.s.slice(1)});
+  if ((themeScore("acc")??0) < 1.5) return T("obs.acc_quiet");
+  return T("obs.default");
 }
 /* Тайланд хэрэгтэй хураангуй. 24 хариулт биш, зөвхөн дүгнэлт. */
 function buildSummary(){
@@ -601,12 +600,12 @@ function inter(at){
   let big, small;
   if (at===8){
     const a = themeScore("acc"), b = themeScore("brk");
-    big = "Таныг юу асааж, юу унтраадаг нь тодорч эхэллээ.";
-    small = (a!==null && b!==null) ? (b>a ? "Одоогоор таны сэрлийг унтраадаг зүйлс илүү хүчтэй байна. Дараагийн 8 асуулт яг юу унтрааж байгааг харуулна." : "Одоогоор таныг асаадаг зүйлс давамгайлж байна. Дараагийн 8 асуулт юу тэдгээрийг унтрааж болохыг харуулна.") : "Дараагийн 8 асуулт таны сэрлийг юу унтрааж байгааг харуулна.";
+    big = T("inter8.title");
+    small = (a!==null && b!==null) ? (b>a ? T("inter8.brk_leads") : T("inter8.acc_leads")) : T("inter8.unknown");
   } else {
     const n = conditions().length;
-    big = n>0 ? `Таны хариултаас ${n} нөхцөл илэрлээ.` : "Таны хариултын хэв маяг тодорч байна.";
-    small = "Сүүлийн 8 асуулт эдгээр нөхцөл таны таашаалд хэрхэн нөлөөлж байгааг харуулна.";
+    big = n>0 ? T("inter16.title",{n}) : T("inter16.none");
+    small = T("inter16.sub");
   }
   w.innerHTML = `<div class="inter fade"><p class="big">${big}</p><p class="muted">${small}</p><button class="btn" id="i-go">Үргэлжлүүлэх</button></div>`;
   document.getElementById("i-go").addEventListener("click",()=>{ S.idx++; renderQ(); });
@@ -627,16 +626,17 @@ function renderResult(){
   document.getElementById("r-brk-l").textContent = LVL_TXT[lvlKey(b)];
   document.getElementById("r-acc-h").textContent = HINT.acc[lvlKey(a)];
   document.getElementById("r-brk-h").textContent = HINT.brk[lvlKey(b)];
-  document.getElementById("r-pre").textContent = S.variant==="curious" ? "Таны хариулт нэг зүйлийг тод харууллаа. Та үүнийг өөрөө анзаараагүй байж магадгүй." : "Таны хамгийн тод ажиглалт";
+  document.getElementById("r-pre").textContent = T(S.variant==="curious" ? "obs.pre.curious" : "obs.pre.sharp");
+  document.getElementById("r-paynote").textContent = T("paynote");
   document.getElementById("r-obs").textContent = observation();
   const c = conditions(), n = c.length;
-  document.getElementById("r-count").textContent = n>0 ? `Таны хариултаас ${n} нөхцөл илэрлээ. Бүгдийг нь дэлгэрэнгүй тайланд тайлбарлана:` : "Дэлгэрэнгүй тайланд таны хариултаас бүтсэн:";
+  document.getElementById("r-count").textContent = n>0 ? T("count.some",{n}) : T("count.none");
   const items = [
     ...c.slice(0,4).map(o=>({blur:o.q.s})),
-    {txt:"Таны сэрлийг хамгийн хүчтэй унтраадаг зүйл"},
-    {txt:"Дур хүсэл тань аяндаа төрдөг үү, эсвэл эхэлсний дараа төрдөг үү"},
-    {txt:"Хамтрагчдаа хэлэх 3 бэлэн өгүүлбэр"},
-    {txt:"Энэ 7 хоногт турших 2 алхам"}
+    {txt:T("locked.top_brake")},
+    {txt:T("locked.desire_type")},
+    {txt:T("locked.sentences")},
+    {txt:T("locked.steps")}
   ];
   document.getElementById("r-locked").innerHTML = items.map(it=>
     `<div class="lock"><span class="ic" aria-hidden="true">🔒</span>${it.blur?`<span class="blur" aria-label="Түгжээтэй нөхцөл">${it.blur}</span>`:`<span>${it.txt}</span>`}</div>`).join("");
@@ -644,7 +644,7 @@ function renderResult(){
 }
 document.getElementById("b-share").addEventListener("click",async()=>{
   const url = location.origin && location.origin.startsWith("http") ? location.origin + "/?utm_source=share" : location.href.split("#")[0];
-  const txt = `Би «${PROFILES[profileKey()].n}» төрөл гарлаа. Чи аль нь вэ? 5 минутын тест: ${url}`;
+  const txt = T("share",{type:PROFILES[profileKey()].n, url});
   try{ await navigator.clipboard.writeText(txt); toast("Хуулагдлаа. Найздаа илгээгээрэй."); } catch(e){ toast(txt); }
   track("share_copy");
 });
@@ -727,32 +727,43 @@ async function onPaid(){
 /* ---------- дэлгэрэнгүй тайлан ---------- */
 function esc(s){ return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
 function renderReport({content:C, summary:M, token}){
+  RC = C || {};
   SCREENS.forEach(s => document.getElementById("s-"+s).hidden = (s!=="report")); window.scrollTo(0,0);
-  const P = PROFILES[M.pk] || PROFILES.calm, dt = C.desire[M.dk] || C.desire.unk;
-  const attn = (t,s)=> s===null ? -1 : (t==="acc" ? 4-s : s);
-  const order = Object.keys(THEMES).map(t=>({t, s:M.scores[t]??null, a:attn(t,M.scores[t]??null)})).sort((x,y)=>y.a-x.a);
+  const pk = PROFILE_KEYS.includes(M.pk) ? M.pk : "calm", dk = ["mixed","resp","spont","unk"].includes(M.dk) ? M.dk : "unk";
+  const sc = t => (M.scores && typeof M.scores[t]==="number") ? M.scores[t] : null;
+  /* сэдвийн түвшин: acc-д өндөр = сайн; бусдад өндөр = анхаарах */
+  const lvl = s => s===null ? "na" : s>=2.5 ? "hi" : s>=1.5 ? "mid" : "lo";
+  const tag = (t,s)=>{ if (s===null) return "na"; const bad = t==="acc" ? 4-s : s; return bad>=2.5?"hi":bad>=1.5?"mid":"lo"; };
+  const order = Object.keys(THEMES).map(t=>{ const s=sc(t); return {t, s, a: s===null ? -1 : (t==="acc" ? 4-s : s)}; }).sort((x,y)=>y.a-x.a);
   const focus = order.filter(o=>o.s!==null).slice(0,3).map(o=>o.t);
-  const cls = (t,s)=>{ if (s===null) return "mid"; const bad = t==="acc" ? 4-s : s; return bad>=2.5?"hi":bad>=1.5?"mid":"lo"; };
-  const lab = {hi:"Анхаарах", mid:"Дунд", lo:"Хүчтэй тал"};
-  const steps = (focus.length?focus:["talk","acc"]).slice(0,2).map(t=>C.themes[t].step);
-  const says = (focus.length?focus:["talk","des","str"]).slice(0,3).map(t=>C.say[t]);
+  const steps = (focus.length?focus:["talk","acc"]).slice(0,2).map(t=>T("report.step."+t));
+  const says = (focus.length?focus:["talk","des","str"]).slice(0,3).map(t=>T("report.say."+t));
+  /* хил дээрх төрөл: оноо 1.75–2.25 бол хөрш төрлийг нэрлэнэ */
+  const a = sc("acc") ?? 0, b = sc("brk") ?? 0, near = x => x>=1.75 && x<2.25;
+  let border = "";
+  if (near(a) || near(b)){
+    const ah = a>=2, bh = b>=2, fa = near(a) ? !ah : ah, fb = near(a) ? bh : !bh;
+    const other = fa&&!fb?"easy": fa&&fb?"sens": !fa&&!fb?"calm":"cond";
+    if (other!==pk) border = T("report.border",{other: T(`profile.${other}.name`)});
+  }
   const link = token && location.origin.startsWith("http") ? `${location.origin}/?r=${token}` : "";
+  const conds = (M.cond||[]).filter(i=>Q[i]);
   document.getElementById("rep").innerHTML = `
     <header class="top"><div class="logo">Асаа<span>гч</span></div><span class="pill">Дэлгэрэнгүй тайлан</span></header>
-    ${link?`<div class="card" style="gap:10px"><b>Тайлангийн холбоосоо хадгалаарай</b><p class="small muted">Энэ холбоосоор тайлангаа 30 хоногийн турш хаанаас ч нээнэ.</p><p class="small" style="word-break:break-all" id="rep-link">${esc(link)}</p><button class="btn ghost" id="b-copylink">Холбоосыг хуулах</button></div>`:""}
-    <div class="profile fade"><div class="eyebrow">Таны төрөл</div><div class="ptype">${esc(P.n)}</div><p>${esc(C.profiles[M.pk]||"")}</p></div>
+    ${link?`<div class="card" style="gap:10px"><b>${esc(T("ui.link.title"))}</b><p class="small muted">${esc(T("ui.link.desc"))}</p><p class="small" style="word-break:break-all" id="rep-link">${esc(link)}</p><button class="btn ghost" id="b-copylink">${esc(T("ui.link.copy"))}</button></div>`:""}
+    <div class="profile fade"><div class="eyebrow">${esc(T("ui.type"))}</div><div class="ptype">${esc(T(`profile.${pk}.name`))}</div><p>${esc(T("report.profile."+pk))}</p>${border?`<p class="muted">${esc(border)}</p>`:""}</div>
     <div class="gaugecard tbars">
-      <div class="eyebrow">6 сэдвийн оноо (0–4)</div>
-      ${Object.keys(THEMES).map(t=>{const s=M.scores[t]??null;return `<div class="gauge"><div class="row"><b>${THEMES[t].name}</b><span class="muted" style="font-variant-numeric:tabular-nums">${s===null?"–":s.toFixed(1)}</span></div><div class="track"><div class="fill ${t==="acc"?"acc":"brk"}" style="width:${(s??0)/4*100}%"></div></div></div>`}).join("")}
-      <p class="small muted">«Сэрэл төрүүлэгч» өндөр байх нь сайн. Бусад сэдэвт өндөр оноо нь тухайн зүйл таны сэрлийг илүү их унтрааж байгааг харуулна.</p>
+      <div class="eyebrow">${esc(T("ui.scores"))}</div>
+      ${Object.keys(THEMES).map(t=>{const s=sc(t);return `<div class="gauge"><div class="row"><b>${THEMES[t].name}</b><span class="muted" style="font-variant-numeric:tabular-nums">${s===null?"–":s.toFixed(1)}</span></div><div class="track"><div class="fill ${t==="acc"?"acc":"brk"}" style="width:${(s??0)/4*100}%"></div></div></div>`}).join("")}
+      <p class="small muted">${esc(T("ui.scores.note"))}</p>
     </div>
-    ${M.cond.length?`<div style="display:grid;gap:12px"><h3>Таны сэрлийг унтраадаг зүйлс, хүчтэйгээс нь</h3><ol class="do">${M.cond.filter(i=>Q[i]).map(i=>`<li><b>${esc(Q[i].s)}</b><br><span class="small muted">${THEMES[Q[i].t].name}</span></li>`).join("")}</ol></div>`:""}
-    <div style="display:grid;gap:8px"><div class="eyebrow">Таны дур хүслийн хэв маяг</div><h3>${esc(dt.n)}</h3><p class="muted">${esc(dt.d)}</p></div>
-    ${order.map(o=>`<div class="tsec"><span class="lvl ${cls(o.t,o.s)}">${o.s===null?"Тодорхойгүй":lab[cls(o.t,o.s)]}</span><h3>${THEMES[o.t].name}</h3><p class="muted">${o.s===null?"Энэ сэдвийн асуултуудад хангалттай хариулт өгөөгүй тул дүгнэлт гаргасангүй.":esc(o.t==="acc" ? (o.s>=1.5 ? C.themes.acc.hi : C.themes.acc.lo) : (cls(o.t,o.s)==="lo" ? C.themes[o.t].lo : C.themes[o.t].hi))}</p></div>`).join("")}
-    <div style="display:grid;gap:14px"><h3>Хамтрагчдаа хэлэх 3 өгүүлбэр</h3>${says.map(s=>`<p class="quote">${esc(s)}</p>`).join("")}</div>
-    <div style="display:grid;gap:12px"><h3>Энэ 7 хоногт турших 2 алхам</h3><ol class="do">${steps.map(s=>`<li>${esc(s)}</li>`).join("")}</ol></div>
-    ${M.safe?`<div class="safe"><b>Хил хязгаарын тухай</b><p class="small">${esc(C.safe)}</p></div>`:""}
-    <p class="small muted">Энэ тайлан таны өгсөн хариултын хэв маягийг тайлбарлана. Онош биш, эмчилгээг орлохгүй.</p>`;
+    ${conds.length?`<div style="display:grid;gap:12px"><h3>${esc(T("ui.conds"))}</h3><ol class="do">${conds.map(i=>`<li><b>${esc(Q[i].s)}</b><br><span class="small muted">${esc(T("report.cond.q"+(i+1)))}</span></li>`).join("")}</ol></div>`:""}
+    <div style="display:grid;gap:8px"><div class="eyebrow">${esc(T("ui.desire"))}</div><h3>${esc(T(`report.desire.${dk}.name`))}</h3><p class="muted">${esc(T(`report.desire.${dk}.desc`))}</p></div>
+    ${order.map(o=>{ const tg = tag(o.t,o.s); return `<div class="tsec"><span class="lvl ${tg==="na"?"mid":tg}">${esc(T("ui.tag."+tg))}</span><h3>${THEMES[o.t].name}</h3><p class="muted">${esc(o.s===null ? T("ui.nodata") : T(`report.theme.${o.t}.${lvl(o.s)}`))}</p></div>`; }).join("")}
+    <div style="display:grid;gap:14px"><h3>${esc(T("ui.says"))}</h3>${says.map(s=>`<p class="quote">${esc(s)}</p>`).join("")}</div>
+    <div style="display:grid;gap:12px"><h3>${esc(T("ui.steps"))}</h3><ol class="do">${steps.map(s=>`<li>${esc(s)}</li>`).join("")}</ol></div>
+    ${M.safe?`<div class="safe"><b>${esc(T("ui.safe"))}</b><p class="small">${esc(T("report.safe"))}</p></div>`:""}
+    <p class="small muted">${esc(T("ui.disclaimer"))}</p>`;
   const cb = document.getElementById("b-copylink");
   if (cb) cb.addEventListener("click", async()=>{ track("link_copy"); try{ await navigator.clipboard.writeText(link); toast("Холбоос хуулагдлаа."); }catch(e){ toast("Холбоосыг тэмдэглэж хуулна уу."); } });
   track("report_view");
