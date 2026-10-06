@@ -1,0 +1,767 @@
+<!doctype html><html lang="mn"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><script>window.__CFG__={mode:"live",api:"https://uqjoeplhqoccrdaddlyh.supabase.co/functions/v1/api",ga4:"",pixel:""}</script><title>Асаагч тест</title>
+<meta name="description" content="Таны сэрэл яагаад унтардаг вэ? 24 асуулт, 5 минут. Юу таныг асааж, юу унтраадгийг олоорой. 18+.">
+<meta property="og:title" content="Таны сэрэл яагаад унтардаг вэ?">
+<meta property="og:description" content="24 асуулт, 5 минут. Юу таныг асааж, юу унтраадгийг олоорой. 18+.">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#1B1219">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='15' fill='%231B1219'/%3E%3Cpath d='M16 6c3 5 7 8 7 13a7 7 0 0 1-14 0c0-3 2-5 3-7 1 2 2 3 3 3 0-3 0-6 1-9z' fill='%23F2876B'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Onest:wght@400;500;600;700&display=swap">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+/* Layout: нэг баганатай, утсанд зориулсан урсгал; нүүр хуудас 960px, тест 560px. Оройн цагийн хувийн орчин тул dark-first. */
+:root{
+  --bg:#1B1219; --surface:#251923; --surface-2:#2F2130; --line:#3D2C3A;
+  --fg:#F5EAEE; --muted:#B9A4B1; --ember:#F2876B; --ember-ink:#2A120C; --brake:#9EA9EC;
+  --ok:#7FC7A1; --warn:#F2C46B;
+  --display:"Cormorant Garamond", "Times New Roman", Georgia, serif;
+  --body:"Onest", "Segoe UI", Roboto, Arial, sans-serif;
+  --r:14px;
+  color-scheme:dark;
+}
+@media (prefers-color-scheme: light){
+  :root:not([data-theme="dark"]){
+    --bg:#FBF5F4; --surface:#FFFFFF; --surface-2:#F4E9EA; --line:#E7D6D9;
+    --fg:#2A1924; --muted:#6F5A67; --ember:#C24F2E; --ember-ink:#FFFFFF; --brake:#4B5BB3;
+    --ok:#2F8A5B; --warn:#A8720E; color-scheme:light;
+  }
+}
+:root[data-theme="light"]{
+  --bg:#FBF5F4; --surface:#FFFFFF; --surface-2:#F4E9EA; --line:#E7D6D9;
+  --fg:#2A1924; --muted:#6F5A67; --ember:#C24F2E; --ember-ink:#FFFFFF; --brake:#4B5BB3;
+  --ok:#2F8A5B; --warn:#A8720E; color-scheme:light;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:16px;line-height:1.6;padding-inline:18px;padding-block:0;-webkit-font-smoothing:antialiased}
+h1,h2,h3{font-family:var(--display);font-weight:600;line-height:1.08;text-wrap:balance;margin:0}
+h1{font-size:clamp(2.6rem,9vw,4.6rem);letter-spacing:-.01em}
+h2{font-size:clamp(1.9rem,5.5vw,2.7rem)}
+h3{font-size:1.5rem}
+p{margin:0}
+em{font-style:italic;color:var(--ember)}
+.wrap{max-width:960px;margin-inline:auto}
+.narrow{max-width:560px;margin-inline:auto}
+.eyebrow{font-size:.74rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.muted{color:var(--muted)}
+.small{font-size:.875rem}
+button{font:inherit;color:inherit;cursor:pointer}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;border:0;border-radius:999px;padding:1rem 1.6rem;font-weight:600;font-size:1.02rem;background:var(--ember);color:var(--ember-ink);transition:transform .15s ease, filter .15s ease;text-decoration:none}
+.btn:hover{filter:brightness(1.06)}
+.btn:active{transform:scale(.98)}
+.btn.ghost{background:transparent;color:var(--fg);border:1px solid var(--line)}
+.btn.block{width:100%}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+:focus-visible{outline:2px solid var(--ember);outline-offset:3px}
+.link{background:none;border:0;color:var(--muted);text-decoration:underline;text-underline-offset:3px;padding:.4rem}
+
+/* top bar */
+.top{display:flex;justify-content:space-between;align-items:center;padding-block:18px}
+.logo{font-family:var(--display);font-size:1.6rem;font-weight:600;font-style:italic;letter-spacing:.01em}
+.logo span{color:var(--ember)}
+.pill{font-size:.78rem;border:1px solid var(--line);border-radius:999px;padding:.25rem .7rem;color:var(--muted)}
+
+/* landing */
+.hero{display:grid;grid-template-columns:1.15fr .85fr;gap:48px;align-items:center;padding-block:28px 56px}
+.hero>*{min-width:0}
+.hero .lead{font-size:1.15rem;color:var(--muted);max-width:34ch;margin-top:20px}
+.hero .cta{margin-top:30px;display:flex;flex-direction:column;align-items:flex-start;gap:10px}
+.gaugecard{background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:24px;display:grid;gap:18px}
+.gauge{display:grid;gap:8px}
+.gauge .row{display:flex;justify-content:space-between;font-size:.9rem}
+.gauge .row b{font-weight:600}
+.gauge .hint{font-size:.85rem;color:var(--muted);line-height:1.4}
+.track{height:12px;border-radius:999px;background:var(--surface-2);overflow:hidden;position:relative}
+.fill{height:100%;border-radius:999px;transition:width 1s cubic-bezier(.2,.8,.2,1)}
+.fill.acc{background:var(--ember)}
+.fill.brk{background:var(--brake)}
+.ticks{display:flex;justify-content:space-between;font-size:.7rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.section{padding-block:56px;border-top:1px solid var(--line)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start}
+.two>*{min-width:0}
+.chips{display:flex;flex-wrap:wrap;gap:10px}
+.chip{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:.5rem .95rem;font-size:.92rem}
+.chip.b{border-color:color-mix(in srgb,var(--brake) 50%,var(--line))}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:28px}
+.steps>div{display:grid;gap:8px;align-content:start}
+.steps .n{font-family:var(--display);font-size:2.6rem;color:var(--ember);line-height:1}
+.offer{background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:28px;display:grid;gap:18px}
+.offer ul{list-style:none;padding:0;margin:0;display:grid;gap:12px}
+.offer li{display:grid;grid-template-columns:22px 1fr;gap:10px}
+.check{color:var(--ember);font-weight:700}
+.price{font-family:var(--display);font-size:3rem;font-weight:600;line-height:1;font-variant-numeric:tabular-nums}
+details{border-bottom:1px solid var(--line);padding-block:16px}
+summary{cursor:pointer;font-weight:600;list-style:none;display:flex;justify-content:space-between;gap:12px}
+summary::after{content:"+";color:var(--ember);font-size:1.3rem;line-height:1}
+details[open] summary::after{content:"–"}
+details p{margin-top:10px;color:var(--muted)}
+footer{padding-block:40px 60px;border-top:1px solid var(--line);color:var(--muted);font-size:.85rem;display:grid;gap:6px}
+
+/* gate */
+.screen{padding-block:20px 120px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:26px;display:grid;gap:18px}
+.checkrow{display:grid;grid-template-columns:24px 1fr;gap:12px;align-items:start;cursor:pointer}
+.checkrow input{width:22px;height:22px;accent-color:var(--ember);margin:2px 0 0}
+
+/* quiz */
+.qhead{display:flex;justify-content:space-between;align-items:center;gap:12px;font-size:.9rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.bar{height:4px;background:var(--surface-2);border-radius:999px;overflow:hidden;margin-top:12px}
+.bar i{display:block;height:100%;background:var(--ember);transition:width .35s ease}
+.qbody{padding-block:36px 24px;display:grid;gap:14px;min-height:220px;align-content:start}
+.qtext{font-family:var(--display);font-size:clamp(1.75rem,6vw,2.3rem);font-weight:600;line-height:1.15;text-wrap:balance}
+.frame{display:inline-block;font-size:.8rem;color:var(--ember);border:1px solid color-mix(in srgb,var(--ember) 40%,transparent);border-radius:999px;padding:.15rem .65rem;justify-self:start}
+.opts{display:grid;gap:10px}
+.opt{display:flex;justify-content:space-between;align-items:center;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:1rem 1.1rem;font-size:1.02rem;transition:border-color .15s, background .15s}
+.opt:hover{border-color:var(--ember)}
+.opt.sel{border-color:var(--ember);background:color-mix(in srgb,var(--ember) 14%,var(--surface))}
+.opt .dots{display:flex;gap:4px}
+.opt .dots i{width:7px;height:7px;border-radius:50%;background:var(--line)}
+.opt .dots i.on{background:var(--ember)}
+.qfoot{display:flex;justify-content:space-between;align-items:center;margin-top:14px;flex-wrap:wrap;gap:8px}
+.qfoot .side{display:flex;gap:4px}
+.inter{text-align:left;display:grid;gap:18px;padding-block:40px}
+.inter .big{font-family:var(--display);font-size:clamp(2rem,7vw,2.8rem);line-height:1.1}
+
+/* result */
+.profile{display:grid;gap:10px}
+.ptype{font-family:var(--display);font-size:clamp(2.6rem,10vw,3.6rem);font-style:italic;color:var(--ember);line-height:1}
+.obs{font-family:var(--display);font-size:clamp(1.55rem,5.4vw,2rem);line-height:1.22;font-weight:600}
+.obs-pre{font-size:.95rem;color:var(--muted)}
+.locked{display:grid;gap:10px}
+.lock{display:grid;grid-template-columns:28px 1fr;gap:10px;align-items:center;background:var(--surface);border:1px dashed var(--line);border-radius:var(--r);padding:.85rem 1rem}
+.lock .blur{filter:blur(5px);user-select:none}
+.lock .ic{font-size:1rem;color:var(--muted);text-align:center}
+.paybar{position:fixed;left:0;right:0;bottom:0;padding:12px 18px calc(12px + env(safe-area-inset-bottom,0px));background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);border-top:1px solid var(--line);z-index:20}
+.paybar .narrow{display:flex;gap:12px;align-items:center}
+.paybar .meta{flex:1;min-width:0;font-size:.85rem;color:var(--muted);line-height:1.3}
+.paybar .meta b{display:block;color:var(--fg);font-size:1rem}
+.sharebox{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+
+/* modal */
+.modal{position:fixed;inset:0;background:rgba(10,5,9,.6);display:grid;place-items:end center;z-index:40;padding:0}
+.sheet{background:var(--surface);width:100%;max-width:520px;border-radius:24px 24px 0 0;padding:24px 20px calc(24px + env(safe-area-inset-bottom,0px));display:grid;gap:16px;max-height:92vh;overflow:auto;border:1px solid var(--line)}
+@media (min-width:640px){.modal{place-items:center}.sheet{border-radius:24px}}
+.inv{display:flex;justify-content:space-between;font-size:.9rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.inv b{color:var(--fg)}
+.qr{background:#fff;border-radius:16px;padding:14px;justify-self:center;width:220px;height:220px;display:grid;place-items:center}
+.qr img,.qr canvas{width:192px!important;height:192px!important}
+.banks{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.bank{background:var(--surface-2);border:1px solid var(--line);border-radius:12px;padding:.7rem .4rem;font-size:.8rem;text-align:center}
+.status{display:flex;gap:10px;align-items:center;font-size:.92rem;color:var(--muted)}
+.spin{width:16px;height:16px;border-radius:50%;border:2px solid var(--line);border-top-color:var(--ember);animation:sp 1s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+.demo-note{font-size:.8rem;border:1px dashed var(--warn);color:var(--warn);border-radius:10px;padding:.6rem .8rem}
+
+/* report */
+.rep{display:grid;gap:28px}
+.tbars{display:grid;gap:14px}
+.tsec{border-top:1px solid var(--line);padding-top:22px;display:grid;gap:10px}
+.lvl{font-size:.75rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;border-radius:999px;padding:.15rem .6rem;justify-self:start}
+.lvl.hi{background:color-mix(in srgb,var(--ember) 20%,transparent);color:var(--ember)}
+.lvl.mid{background:color-mix(in srgb,var(--warn) 20%,transparent);color:var(--warn)}
+.lvl.lo{background:color-mix(in srgb,var(--ok) 20%,transparent);color:var(--ok)}
+.quote{border-left:3px solid var(--ember);padding:.4rem 0 .4rem 1rem;font-family:var(--display);font-size:1.3rem;line-height:1.3}
+.safe{border:1px solid var(--brake);border-radius:var(--r);padding:16px;display:grid;gap:6px}
+ol.do{margin:0;padding-left:1.2rem;display:grid;gap:10px}
+
+/* demo panel */
+.dbtn{position:fixed;left:12px;bottom:calc(84px + env(safe-area-inset-bottom,0px));z-index:30;font-size:.75rem;border-radius:999px;border:1px dashed var(--warn);color:var(--warn);background:var(--bg);padding:.35rem .7rem}
+.dpanel{position:fixed;left:12px;right:12px;bottom:calc(120px + env(safe-area-inset-bottom,0px));max-width:380px;z-index:31;background:var(--surface);border:1px dashed var(--warn);border-radius:14px;padding:14px;display:grid;gap:10px;font-size:.82rem}
+.dpanel .log{max-height:160px;overflow:auto;font-family:ui-monospace,Menlo,monospace;font-size:.72rem;color:var(--muted);background:var(--bg);border-radius:8px;padding:8px}
+.dpanel .acts{display:flex;flex-wrap:wrap;gap:6px}
+.dpanel button{border:1px solid var(--line);background:var(--surface-2);border-radius:8px;padding:.35rem .6rem;font-size:.78rem}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(96px + env(safe-area-inset-bottom,0px));background:var(--fg);color:var(--bg);padding:.6rem 1rem;border-radius:999px;font-size:.88rem;z-index:50}
+
+.fade{animation:fd .35s ease both}
+@keyframes fd{from{opacity:.001;transform:translateY(6px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media (max-width:760px){
+  .hero{grid-template-columns:1fr;gap:28px;padding-block:8px 40px}
+  .two{grid-template-columns:1fr;gap:24px}
+  .steps{grid-template-columns:1fr;gap:18px}
+  .section{padding-block:40px}
+}
+</style>
+<!-- ============ 1. НҮҮР ХУУДАС ============ -->
+<section id="s-landing">
+  <div class="wrap">
+    <header class="top">
+      <div class="logo">Асаа<span>гч</span></div>
+      <div class="pill">18+ · бүртгэлгүй</div>
+    </header>
+
+    <div class="hero">
+      <div>
+        <div class="eyebrow">24 асуулт · 5 минут</div>
+        <h1 style="margin-top:14px">Таны сэрэл яагаад <em>унтардаг</em> вэ?</h1>
+        <p class="lead">Хүн бүрт сэрэл төрүүлдэг зүйлс, сэрлийг унтраадаг зүйлс бий. Хариултаараа өөрийгөө юу асааж, юу унтрааж байгааг хараарай.</p>
+        <div class="cta">
+          <button class="btn" id="b-start">Тестээ эхлэх</button>
+          <span class="small muted">Товч үр дүн үнэгүй. Дэлгэрэнгүй тайлан 8,900₮.</span>
+        </div>
+      </div>
+      <div class="gaugecard" aria-label="Жишээ үр дүн">
+        <div class="eyebrow">Жишээ үр дүн</div>
+        <div class="ptype" style="font-size:2.4rem">Мэдрэмтгий</div>
+        <div class="gauge">
+          <div class="row"><b>Сэрэл төрүүлэгч</b><span class="muted">өндөр</span></div>
+          <div class="track"><div class="fill acc" style="width:72%"></div></div>
+          <p class="hint">Танд сэрэл амархан төрдөг.</p>
+        </div>
+        <div class="gauge">
+          <div class="row"><b>Сэрэл унтраагч</b><span class="muted">өндөр</span></div>
+          <div class="track"><div class="fill brk" style="width:81%"></div></div>
+          <p class="hint">Жижиг зүйл ч таны сэрлийг амархан унтраадаг.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="section two">
+      <div style="display:grid;gap:16px">
+        <h2>«Би хүсэл багатай» гэж бодож байна уу?</h2>
+        <p class="muted">Ихэнхдээ асуудал дур хүсэлд биш, сэрлийг унтраадаг зүйлсэд байдаг. Тэдгээр нь хүчтэй ажиллаж байхад хамгийн сайхан хүрэлт ч дотогш нэвтэрдэггүй. Тест таныг юу унтрааж байгааг яг нэрээр нь гаргаж өгнө.</p>
+      </div>
+      <div style="display:grid;gap:14px">
+        <div class="eyebrow">Сэрлийг унтраадаг зүйлс</div>
+        <div class="chips">
+          <span class="chip b">Хэн нэгэн сонсох вий</span>
+          <span class="chip b">Маргаашийн ажил, төлбөр</span>
+          <span class="chip b">Биеэсээ ичих</span>
+          <span class="chip b">«Би сайн хийж байна уу?»</span>
+          <span class="chip b">Ядаргаа</span>
+          <span class="chip b">Таашаалын дүр эсгэлт</span>
+        </div>
+        <div class="eyebrow" style="margin-top:8px">Сэрэл төрүүлдэг зүйлс</div>
+        <div class="chips">
+          <span class="chip">Үнэр, хоолой, хүрэлт</span>
+          <span class="chip">Шинэ орчин</span>
+          <span class="chip">Хамтрагчийн итгэл</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="eyebrow">Хэрхэн ажилладаг вэ</div>
+      <div class="steps">
+        <div><span class="n">1</span><h3>24 асуултад хариулна</h3><p class="muted">Нэг дэлгэцэнд нэг асуулт. Хариулахыг хүсэхгүй асуултаа алгасаж болно.</p></div>
+        <div><span class="n">2</span><h3>Товч үр дүнгээ үнэгүй харна</h3><p class="muted">Таны төрөл, юу таныг асааж, юу унтрааж байгаа, хамгийн тод ажиглалт.</p></div>
+        <div><span class="n">3</span><h3>Хүсвэл тайлангаа нээнэ</h3><p class="muted">QPay-ээр 8,900₮ төлөөд бүрэн тайлангаа шууд харна.</p></div>
+      </div>
+    </div>
+
+    <div class="section two">
+      <div style="display:grid;gap:16px">
+        <h2>Дэлгэрэнгүй тайланд юу байх вэ?</h2>
+        <p class="muted">Ерөнхий зөвлөгөө биш. Тайлан бүхэлдээ таны хариултаас бүтнэ. Хоёр хүний тайлан ижилхэн гарахгүй.</p>
+        <p class="small muted">Сэрэл ба түүнийг саатуулах хүчин зүйлсийн олон улсын судалгаанд ашигладаг хос загвар (Dual Control Model) дээр суурилсан.</p>
+      </div>
+      <div class="offer">
+        <ul>
+          <li><span class="check">✓</span><span>Таны сэрлийг унтраадаг зүйлс, хүчтэйгээс нь эрэмбэлсэн</span></li>
+          <li><span class="check">✓</span><span>6 сэдвийн оноо, сэдэв бүрийн тайлбар</span></li>
+          <li><span class="check">✓</span><span>Таны дур хүсэл аяндаа төрдөг үү, эсвэл эхэлсний дараа төрдөг үү</span></li>
+          <li><span class="check">✓</span><span>Хамтрагчдаа хэлэх 3 бэлэн өгүүлбэр</span></li>
+          <li><span class="check">✓</span><span>Энэ 7 хоногт турших 2 алхам</span></li>
+          <li><span class="check">✓</span><span>30 хоног нээгдэх хувийн холбоос</span></li>
+        </ul>
+        <div style="display:flex;align-items:end;justify-content:space-between;gap:12px;flex-wrap:wrap">
+          <div><div class="price">8,900₮</div><div class="small muted">нэг удаагийн төлбөр</div></div>
+          <button class="btn" id="b-start2">Тестээ эхлэх</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="section two">
+      <div style="display:grid;gap:16px">
+        <h2>Таны хариулт таны утаснаас гарахгүй</h2>
+        <p class="muted">Бүртгэл, нэр, утасны дугаар шаардахгүй. 24 хариулт тань серверт илгээгдэхгүй. Төлбөр төлсний дараа тайлангаа дахин нээх холбоос үүсгэхийн тулд зөвхөн үр дүнгийн товч хураангуй 30 хоног хадгалагдаж, дараа нь устгагдана.</p>
+        <a class="small muted" href="privacy.html" style="text-decoration:underline">Нууцлал ба үйлчилгээний нөхцөл</a>
+      </div>
+      <div>
+        <details><summary>Энэ онош мөн үү?</summary><p>Үгүй. Тест таны хариултын хэв маягийг тайлбарладаг. Эмчийн үзлэг, сэтгэл зүйчийн зөвлөгөөг орлохгүй.</p></details>
+        <details><summary>Хэнд зориулсан бэ?</summary><p>18 нас хүрсэн эмэгтэйчүүдэд. Хамтрагчгүй бол хамтрагчтай холбоотой асуултад «Хамаарахгүй» гэж хариулна.</p></details>
+        <details><summary>Төлбөрийг яаж төлөх вэ?</summary><p>QPay-ээр. Аль ч банкны аппаар QR кодыг уншуулж эсвэл утсан дээрээ банкаа сонгож төлнө. Төлбөр орсны дараа тайлан шууд нээгдэнэ.</p></details>
+        <details><summary>Тайлангаа дараа нь харж болох уу?</summary><p>Тийм. Төлбөр төлсний дараа 30 хоног нээгдэх хувийн холбоос өгнө. Холбоосоо хадгалж аваарай.</p></details>
+      </div>
+    </div>
+
+    <footer>
+      <span>Энэ тест онош биш, эмчилгээг орлохгүй. Зөвхөн 18+.</span>
+      <span><a href="privacy.html" style="color:inherit">Нууцлал ба нөхцөл</a></span>
+      <span id="demo-foot">Демо хувилбар: бодит төлбөр авахгүй.</span>
+    </footer>
+  </div>
+</section>
+
+<!-- ============ 2. 18+ ============ -->
+<section id="s-gate" class="screen" hidden>
+  <div class="narrow" style="display:grid;gap:20px">
+    <header class="top"><div class="logo">Асаа<span>гч</span></div><button class="link" data-go="landing">Буцах</button></header>
+    <div class="card fade">
+      <h2>Эхлэхийн өмнө</h2>
+      <label class="checkrow" for="c-age"><input type="checkbox" id="c-age"><span>Би 18 нас хүрсэн.</span></label>
+      <label class="checkrow" for="c-terms"><input type="checkbox" id="c-terms"><span>Энэ тест онош биш гэдгийг ойлгож байна. Хариултаа хүссэн үедээ алгасаж болно.</span></label>
+      <p class="small muted">Ганцаараа, тайван газар бөглөхийг зөвлөж байна. Хариултаа үнэнээр нь өгөх тусам үр дүн тань тодорхой гарна.</p>
+      <button class="btn block" id="b-gate" disabled>Асуултууд руу орох</button>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 3. ТЕСТ ============ -->
+<section id="s-quiz" class="screen" hidden>
+  <div class="narrow">
+    <header class="top"><div class="logo">Асаа<span>гч</span></div><span class="pill" id="q-theme"></span></header>
+    <div class="qhead"><span id="q-count">1 / 24</span><span id="q-left"></span></div>
+    <div class="bar"><i id="q-bar" style="width:0"></i></div>
+    <div id="q-wrap"></div>
+  </div>
+</section>
+
+<!-- ============ 4. ҮНЭГҮЙ ҮР ДҮН ============ -->
+<section id="s-result" class="screen" hidden>
+  <div class="narrow" style="display:grid;gap:28px">
+    <header class="top"><div class="logo">Асаа<span>гч</span></div><span class="pill">Товч үр дүн</span></header>
+    <div class="profile fade">
+      <div class="eyebrow">Таны төрөл</div>
+      <div class="ptype" id="r-type"></div>
+      <p class="muted" id="r-typedesc"></p>
+    </div>
+    <div class="gaugecard">
+      <div class="gauge"><div class="row"><b>Сэрэл төрүүлэгч</b><span class="muted" id="r-acc-l"></span></div><div class="track"><div class="fill acc" id="r-acc" style="width:0"></div></div><p class="hint" id="r-acc-h"></p></div>
+      <div class="gauge"><div class="row"><b>Сэрэл унтраагч</b><span class="muted" id="r-brk-l"></span></div><div class="track"><div class="fill brk" id="r-brk" style="width:0"></div></div><p class="hint" id="r-brk-h"></p></div>
+    </div>
+    <div style="display:grid;gap:10px">
+      <p class="obs-pre" id="r-pre"></p>
+      <p class="obs" id="r-obs"></p>
+    </div>
+    <div style="display:grid;gap:14px">
+      <p id="r-count" style="font-weight:600"></p>
+      <div class="locked" id="r-locked"></div>
+      <p class="small muted">Дэлгэрэнгүй тайлан таны хариултаас бүтнэ. Төлбөр орсны дараа шууд нээгдэнэ.</p>
+    </div>
+    <div class="card" style="gap:12px">
+      <p style="font-weight:600">Найздаа илгээх үү?</p>
+      <p class="small muted">Зөвхөн таны төрлийн нэр хуваалцагдана. Хариулт тань хуваалцагдахгүй.</p>
+      <div class="sharebox"><button class="btn ghost" id="b-share">Текстийг хуулах</button></div>
+    </div>
+  </div>
+  <div class="paybar">
+    <div class="narrow">
+      <div class="meta"><b>Дэлгэрэнгүй тайлан</b>8,900₮ · QPay</div>
+      <button class="btn" id="b-pay">Тайлангаа нээх</button>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 5. QPAY ============ -->
+<div class="modal" id="m-pay" hidden>
+  <div class="sheet fade" role="dialog" aria-modal="true" aria-labelledby="pay-h">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <h3 id="pay-h">QPay-ээр төлөх</h3>
+      <button class="link" id="b-payclose">Хаах</button>
+    </div>
+    <div class="inv"><span>Нэхэмжлэл <b id="p-no">…</b></span><span>Дүн <b>8,900₮</b></span></div>
+    <div class="qr" id="p-qr"></div>
+    <p class="small muted" style="text-align:center">Банкны аппаараа QR кодыг уншуулна уу, эсвэл утсан дээрээ банкаа сонгоно уу.</p>
+    <div class="banks" id="p-banks"></div>
+    <div class="status" id="p-status"><span class="spin"></span><span>Төлбөр хүлээж байна…</span></div>
+    <button class="btn ghost block" id="b-check">Төлбөр шалгах</button>
+    <div class="demo-note" id="p-demo">Демо горим: бодит төлбөр авахгүй. <button class="link" id="b-demopaid" style="color:inherit">Төлбөр орсон гэж үзэх</button></div>
+  </div>
+</div>
+
+<!-- ============ 6. ТАЙЛАН ============ -->
+<section id="s-report" class="screen" hidden>
+  <div class="narrow rep" id="rep"></div>
+</section>
+
+<button class="dbtn" id="d-btn">Демо самбар</button>
+<div class="dpanel" id="d-panel" hidden>
+  <b>Демо самбар (бодит сайтад харагдахгүй)</b>
+  <div class="acts">
+    <button id="d-fill">Жишээ хариултаар бөглөх</button>
+    <button id="d-var">Хувилбар солих</button>
+    <button id="d-reset">Эхнээс нь</button>
+  </div>
+  <div>A/B хувилбар: <b id="d-v"></b></div>
+  <div class="log" id="d-log"></div>
+</div>
+
+<script>
+/* ================== ТОХИРГОО ==================
+ * Сервер (server.js) энэ хуудсыг үйлчлэхдээ window.__CFG__-г дээр нь
+ * оруулж өгнө: { mode:"live", ga4:"G-...", pixel:"123..." }.
+ * Сервергүй нээгдвэл (Claude-ын демо) автоматаар "demo" горимд ажиллана.
+ */
+const CFG = Object.assign({mode:"demo", api:"/api", ga4:"", pixel:""}, window.__CFG__ || {});
+const CONFIG = { mode: CFG.mode, apiBase: CFG.api, price: 8900, pollMs: 3000, pollMaxMs: 10*60*1000 };
+
+/* ---------- аналитикийн скрипт (ID өгсөн үед л) ---------- */
+(function loadAnalytics(){
+  if (CFG.ga4){
+    const s=document.createElement("script"); s.async=true; s.src="https://www.googletagmanager.com/gtag/js?id="+encodeURIComponent(CFG.ga4); document.head.appendChild(s);
+    window.dataLayer=window.dataLayer||[]; window.gtag=function(){dataLayer.push(arguments)}; gtag("js",new Date()); gtag("config",CFG.ga4);
+  }
+  if (CFG.pixel){
+    !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version="2.0";n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,"script","https://connect.facebook.net/en_US/fbevents.js");
+    fbq("init",CFG.pixel); fbq("track","PageView");
+  }
+})();
+
+/* ================== АСУУЛТУУД ================== */
+const THEMES = {
+  acc:  {name:"Сэрэл төрүүлэгч", frame:"Ерөнхийдөө"},
+  brk:  {name:"Сэрэл унтраагч", frame:"Ерөнхийдөө"},
+  str:  {name:"Стресс ба ачаалал", frame:"Сүүлийн 4 долоо хоногт"},
+  body: {name:"Биеийн мэдрэмж", frame:"Сүүлийн 4 долоо хоногт"},
+  des:  {name:"Хүсэл ба сэрэл", frame:"Сүүлийн 4 долоо хоногт"},
+  talk: {name:"Таашаал ба яриа", frame:"Сүүлийн 4 долоо хоногт"}
+};
+const Q = [
+ {t:"acc", x:"Хамтрагчийн үнэр, хоолой, хүрэлтээс сэрэл амархан төрдөг.", s:"Үнэр, хоолой, хүрэлт"},
+ {t:"acc", x:"Ажлын дундуур ч сексийн тухай бодол санаандгүй орж ирдэг.", s:"Өдрийн дундах бодол"},
+ {t:"acc", x:"Шинэ газар, гэнэтийн нөхцөлд дур хүсэл амархан төрдөг.", s:"Шинэ орчин"},
+ {t:"acc", x:"Хамтрагчаа бусдын дунд өөртөө итгэлтэй байхыг харахад сэрэл төрдөг.", s:"Хамтрагчийн итгэл"},
+ {t:"brk", x:"Хэн нэгэн сонсох вий гэхээс сэрэл унтарчихдаг.", s:"Хэн нэгэн сонсох вий гэсэн айдас"},
+ {t:"brk", x:"Орондоо «би хангалттай сайн байж чадаж байна уу» гэж санаа зовдог.", s:"«Сайн хийж байна уу?» гэсэн эргэлзээ"},
+ {t:"brk", x:"Дотно байхад анхаарал нэг л сарнивал буцаад сэрэл хөдлөхөд хэцүү байдаг.", s:"Анхаарал сарних"},
+ {t:"brk", x:"Гэр замбараагүй, ажил дуусаагүй байхад таашаалдаа автаж чаддаггүй.", s:"Гэр, ажлын бухимдал"},
+ {t:"str", x:"Орондоо ороод маргаашийн ажил, мөнгө төлбөрт санаа зовж хэвтсэн.", s:"Маргаашийн санаа зоволт"},
+ {t:"str", x:"Ядарсандаа сексээс татгалзсан.", s:"Ядаргаа"},
+ {t:"str", x:"Сексийг заавал амжуулах ёстой ажил шиг санаж хийсэн.", s:"Сексийг үүрэг мэт мэдрэх"},
+ {t:"str", x:"Өдрийн стресс, бухимдлаа алхах, уйлах, тэврүүлэх зэргээр биеэсээ гаргаж чадсан.", s:"Стрессээ биеэрээ гаргадаггүй", r:1},
+ {t:"body", x:"Дотно байхдаа биеэсээ ичээд нуух эсвэл гэрлээ унтраахыг хүссэн.", s:"Биеэсээ ичих"},
+ {t:"body", x:"Бэлэг эрхтнийхээ харагдах байдал, үнэр «хэвийн» болов уу гэж санаа зовсон.", s:"Бэлэг эрхтний талаарх санаа зоволт"},
+ {t:"body", x:"Биеэсээ таашаал авах бүрэн эрхтэй гэдгээ мэдэрсэн.", s:"Таашаал авах эрхээ мэдрэхгүй", r:1},
+ {t:"body", x:"Толинд хараад өөрийгөө шүүмжилсэн бодол орондоо хүртэл дагаж ирсэн.", s:"Толины шүүмжлэл"},
+ {t:"des", x:"Эхэндээ дур хүсэл төрөөгүй ч эхэлсний дараа халж, таашаал авсан.", s:"Эхэлсний дараа төрөх хүсэл", pattern:1},
+ {t:"des", x:"Бие сэрсэн мөртлөө сэтгэл огт хүсэхгүй байсан удаа гарсан.", s:"Бие ба сэтгэлийн зөрөө"},
+ {t:"des", x:"«Миний дур хүсэл бусдынхаас бага юм байна, би нэг л биш байна даа» гэж бодсон.", s:"«Надад гэм байна» гэсэн бодол"},
+ {t:"des", x:"Хамтрагчтайгаа секс хийх хүсэл тань таарахгүйгээс сэтгэл зовсон.", s:"Хүслийн зөрөөний дарамт"},
+ {t:"talk", x:"Орондоо таашаал авч байгаа дүр эсгэсэн.", s:"Таашаалын дүр эсгэлт"},
+ {t:"talk", x:"Юунаас таашаал авдгаа хамтрагчдаа шууд хэлсэн.", s:"Таалагддагаа хэлдэггүй", r:1},
+ {t:"talk", x:"Оргазмд хүрсэн үү, үгүй юу гэдгээр секс сайн болсон эсэхийг дүгнэсэн.", s:"Оргазмыг амжилтын хэмжүүр болгох"},
+ {t:"talk", x:"Нөгөө хүнээ гомдоочих вий гээд өөрт таалагдахгүй зүйлийг дуугүй тэвчсэн.", s:"Таалагдахгүй зүйлийг тэвчих"}
+];
+const SCALE = ["Хэзээ ч үгүй","Ховор","Заримдаа","Ихэвчлэн","Үргэлж"];
+
+/* Үнэгүй хэсэгт харагдах профайлын товч тайлбар. Урт тайлбар нь серверт. */
+const PROFILES = {
+  easy: {n:"Амархан асдаг", d:"Танд сэрэл амархан төрдөг, бас амархан унтардаггүй."},
+  sens: {n:"Мэдрэмтгий", d:"Танд сэрэл амархан төрдөг ч жижиг зүйлээс амархан унтардаг."},
+  calm: {n:"Тайван гал", d:"Танд сэрэл аажуу төрдөг, бас амархан унтардаггүй."},
+  cond: {n:"Нөхцөл шаарддаг", d:"Таны сэрлийг унтраадаг зүйлс асаадаг зүйлсээс илүү хүчтэй. Тохиромжтой нөхцөлгүй бол хүсэл төрөхөд хэцүү."}
+};
+const HINT = {
+  acc: {hi:"Танд сэрэл амархан төрдөг.", mid:"Тодорхой нөхцөлд сэрэл тань төрдөг.", lo:"Танд сэрэл төрөхөд хугацаа, тохиромжтой нөхцөл хэрэгтэй.", na:"Хангалттай хариулт өгөөгүй."},
+  brk: {hi:"Жижиг зүйл ч таны сэрлийг амархан унтраадаг.", mid:"Зарим зүйл таны сэрлийг унтраадаг.", lo:"Таны сэрэл амархан унтардаггүй.", na:"Хангалттай хариулт өгөөгүй."}
+};
+
+/* ================== ТӨЛӨВ ================== */
+const S = {answers: Array(Q.length).fill(null), idx:0, paid:false, variant:null, invoice:null, shownInter:{}};
+const store = { get(k){ try{return localStorage.getItem(k)}catch(e){return null} }, set(k,v){ try{localStorage.setItem(k,v)}catch(e){} } };
+S.variant = store.get("ab_variant");
+if (!S.variant) { S.variant = Math.random() < .5 ? "sharp" : "curious"; store.set("ab_variant",S.variant); }
+
+/* ================== АНАЛИТИК ================== */
+const LOG = [];
+function track(ev, data={}){
+  const payload = {variant:S.variant, ...data};
+  LOG.push({ev, ...payload, t:new Date().toTimeString().slice(0,8)});
+  try{ if (window.gtag) gtag("event", ev, payload); }catch(e){}
+  try{
+    if (window.fbq){
+      if (ev==="pay_click") fbq("track","InitiateCheckout",{value:CONFIG.price,currency:"MNT"});
+      else if (ev==="paid") fbq("track","Purchase",{value:CONFIG.price,currency:"MNT"});
+      else if (ev==="quiz_complete") fbq("track","CompleteRegistration");
+      else fbq("trackCustom", ev, payload);
+    }
+  }catch(e){}
+  if (ev==="paid"){ try{ if (window.gtag) gtag("event","purchase",{value:CONFIG.price,currency:"MNT",transaction_id:data.ref||""}); }catch(e){} }
+  const l = document.getElementById("d-log");
+  if (l){ l.textContent = LOG.map(p => `${p.t} ${p.ev}${p.n!=null?(" n="+p.n):""}`).join("\n"); l.scrollTop = l.scrollHeight; }
+}
+
+/* ================== ОНОО ================== */
+function val(i){ const a = S.answers[i]; if (typeof a !== "number") return null; return Q[i].r ? 4 - a : a; }
+function themeScore(t){
+  const v = Q.map((q,i)=> (q.t===t && !q.pattern) ? val(i) : null).filter(x=>x!==null);
+  if (v.length < 2) return null;
+  return v.reduce((a,b)=>a+b,0)/v.length;
+}
+function lvlKey(x){ return x===null ? "na" : x>=2.5 ? "hi" : x>=1.5 ? "mid" : "lo"; }
+const LVL_TXT = {hi:"өндөр", mid:"дунд", lo:"бага", na:"тодорхойгүй"};
+function conditions(){
+  return Q.map((q,i)=>({i, q, v:val(i)})).filter(o => o.q.t!=="acc" && !o.q.pattern && o.v!==null && o.v>=3).sort((a,b)=>b.v-a.v);
+}
+function profileKey(){
+  const a = themeScore("acc") ?? 0, b = themeScore("brk") ?? 0, ah = a>=2, bh = b>=2;
+  return ah&&!bh?"easy": ah&&bh?"sens": !ah&&!bh?"calm":"cond";
+}
+function desireKey(){
+  const r = S.answers[16], s = S.answers[1];
+  const R = typeof r==="number" && r>=3, Sp = typeof s==="number" && s>=3;
+  return R&&Sp ? "mixed" : R ? "resp" : Sp ? "spont" : "unk";
+}
+function observation(){
+  const brk = themeScore("brk") ?? 0, str = themeScore("str") ?? 0;
+  if (val(20)>=3) return "Та таашаал авсан болж дүр эсгэсэн байна. Энэ сард ганц биш удаа. Хамтрагч тань үүнийг жинхэнэ таашаал гэж андуураад, яг тэр зүйлээ дахин дахин давтаж магадгүй.";
+  if (val(23)>=3) return "Та орондоо өөрт таалагдахгүй зүйлийг дуугүй тэвчжээ. Таны таашаал бусдын ая тухын золиос болох ёсгүй.";
+  if (val(18)>=3 && brk>=2) return "Та өөрийгөө дур хүсэл багатай гэж боддог байж магадгүй. Гэтэл хариулт тань өөр зүйл харууллаа: таны дур хүсэл бага биш. Харин түүнийг унтраадаг зүйлс асаадаг зүйлсээс нь олон байна.";
+  if (str>=2.5) return "Таны бие сэрэл авахаасаа өмнө стресст боологдож байна. Стресс хаалгаа хаасан үед ямар ч хүрэлт таашаал болж хүрч чадахгүй.";
+  if (val(17)>=3) return "Бие тань сэрээд байхад сэтгэл тань огт хүсэхгүй байсан. Энэ хоёр зөрөхөд аль мэдрэмждээ итгэхээ ихэнх хүн мэддэггүй.";
+  const top = Q.map((q,i)=>({q,v:val(i)})).filter(o=>o.q.t==="brk"&&o.v!==null).sort((x,y)=>y.v-x.v)[0];
+  if (top && top.v>=2) return `Танд сэрэл төрөх гэж байна. Гэвч «${top.q.s.toLowerCase()}» түүнийг тэр дор нь унтрааж байна.`;
+  if ((themeScore("acc")??0) < 1.5) return "Таныг асаадаг зүйлс одоогоор чимээгүй байна. Харин юу таныг асааж чадахыг хариулт тань аль хэдийн харуулж байна.";
+  return "Таны сэрэл амархан унтардаггүй. Энэ бол давуу тал. Үүнийг яаж бүрэн ашиглахыг тайлан харуулна.";
+}
+/* Тайланд хэрэгтэй хураангуй. 24 хариулт биш, зөвхөн дүгнэлт. */
+function buildSummary(){
+  const scores = {}; Object.keys(THEMES).forEach(t=>{ const s=themeScore(t); scores[t] = s===null?null:Math.round(s*10)/10; });
+  return { pk: profileKey(), scores, dk: desireKey(), cond: conditions().map(o=>o.i), safe: val(23)>=3 };
+}
+
+/* ================== ДЭЛГЭЦ ================== */
+const SCREENS = ["landing","gate","quiz","result","report"];
+function go(name){
+  SCREENS.forEach(s => document.getElementById("s-"+s).hidden = (s!==name));
+  window.scrollTo(0,0);
+  if (name==="quiz") renderQ();
+  if (name==="result") renderResult();
+}
+document.querySelectorAll("[data-go]").forEach(b=>b.addEventListener("click",()=>go(b.dataset.go)));
+["b-start","b-start2"].forEach(id=>document.getElementById(id).addEventListener("click",()=>{track("quiz_start_click"); go("gate");}));
+const cAge=document.getElementById("c-age"), cTerms=document.getElementById("c-terms"), bGate=document.getElementById("b-gate");
+function gateOk(){ bGate.disabled = !(cAge.checked && cTerms.checked); }
+cAge.addEventListener("change",gateOk); cTerms.addEventListener("change",gateOk);
+bGate.addEventListener("click",()=>{ track("quiz_start"); S.idx=0; go("quiz"); });
+
+/* ---------- тест ---------- */
+function renderQ(){
+  const i = S.idx, q = Q[i], th = THEMES[q.t];
+  document.getElementById("q-theme").textContent = th.name;
+  document.getElementById("q-count").textContent = `${i+1} / ${Q.length}`;
+  document.getElementById("q-left").textContent = `~${Math.max(1, Math.ceil((Q.length-i)*12/60))} мин үлдлээ`;
+  document.getElementById("q-bar").style.width = (i/Q.length*100)+"%";
+  const cur = S.answers[i], w = document.getElementById("q-wrap");
+  w.innerHTML = `
+    <div class="qbody fade"><span class="frame">${th.frame}</span><p class="qtext">${q.x}</p></div>
+    <div class="opts">${SCALE.map((s,k)=>`<button class="opt${cur===k?" sel":""}" data-v="${k}"><span>${s}</span><span class="dots">${[0,1,2,3].map(d=>`<i class="${d<k?"on":""}"></i>`).join("")}</span></button>`).join("")}</div>
+    <div class="qfoot">
+      <button class="link" id="q-back" ${i===0?"style='visibility:hidden'":""}>← Өмнөх</button>
+      <span class="side"><button class="link" data-v="na">Хамаарахгүй</button><button class="link" data-v="skip">Алгасах</button></span>
+    </div>`;
+  w.querySelectorAll("[data-v]").forEach(b=>b.addEventListener("click",()=>{
+    const v = b.dataset.v; S.answers[i] = (v==="na"||v==="skip") ? v : +v;
+    b.classList.add("sel"); setTimeout(next, 180);
+  }));
+  document.getElementById("q-back").addEventListener("click",()=>{ if (S.idx>0){S.idx--; renderQ();} });
+}
+function next(){
+  const i = S.idx;
+  if (i===7 && !S.shownInter[8]) { S.shownInter[8]=1; track("q8_reached"); return inter(8); }
+  if (i===15 && !S.shownInter[16]) { S.shownInter[16]=1; track("q16_reached"); return inter(16); }
+  if (i < Q.length-1){ S.idx++; renderQ(); }
+  else { track("quiz_complete",{n:conditions().length}); go("result"); }
+}
+function inter(at){
+  const w = document.getElementById("q-wrap");
+  document.getElementById("q-bar").style.width = (at/Q.length*100)+"%";
+  let big, small;
+  if (at===8){
+    const a = themeScore("acc"), b = themeScore("brk");
+    big = "Таныг юу асааж, юу унтраадаг нь тодорч эхэллээ.";
+    small = (a!==null && b!==null) ? (b>a ? "Одоогоор таны сэрлийг унтраадаг зүйлс илүү хүчтэй байна. Дараагийн 8 асуулт яг юу унтрааж байгааг харуулна." : "Одоогоор таныг асаадаг зүйлс давамгайлж байна. Дараагийн 8 асуулт юу тэдгээрийг унтрааж болохыг харуулна.") : "Дараагийн 8 асуулт таны сэрлийг юу унтрааж байгааг харуулна.";
+  } else {
+    const n = conditions().length;
+    big = n>0 ? `Таны хариултаас ${n} нөхцөл илэрлээ.` : "Таны хариултын хэв маяг тодорч байна.";
+    small = "Сүүлийн 8 асуулт эдгээр нөхцөл таны таашаалд хэрхэн нөлөөлж байгааг харуулна.";
+  }
+  w.innerHTML = `<div class="inter fade"><p class="big">${big}</p><p class="muted">${small}</p><button class="btn" id="i-go">Үргэлжлүүлэх</button></div>`;
+  document.getElementById("i-go").addEventListener("click",()=>{ S.idx++; renderQ(); });
+}
+
+/* ---------- товч үр дүн ---------- */
+function setGauge(id, x){
+  const el = document.getElementById(id); el.style.width = "0";
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{ el.style.width = ((x??0)/4*100)+"%"; }));
+}
+function renderResult(){
+  const P = PROFILES[profileKey()];
+  document.getElementById("r-type").textContent = P.n;
+  document.getElementById("r-typedesc").textContent = P.d;
+  const a = themeScore("acc"), b = themeScore("brk");
+  setGauge("r-acc", a); setGauge("r-brk", b);
+  document.getElementById("r-acc-l").textContent = LVL_TXT[lvlKey(a)];
+  document.getElementById("r-brk-l").textContent = LVL_TXT[lvlKey(b)];
+  document.getElementById("r-acc-h").textContent = HINT.acc[lvlKey(a)];
+  document.getElementById("r-brk-h").textContent = HINT.brk[lvlKey(b)];
+  document.getElementById("r-pre").textContent = S.variant==="curious" ? "Таны хариулт нэг зүйлийг тод харууллаа. Та үүнийг өөрөө анзаараагүй байж магадгүй." : "Таны хамгийн тод ажиглалт";
+  document.getElementById("r-obs").textContent = observation();
+  const c = conditions(), n = c.length;
+  document.getElementById("r-count").textContent = n>0 ? `Таны хариултаас ${n} нөхцөл илэрлээ. Бүгдийг нь дэлгэрэнгүй тайланд тайлбарлана:` : "Дэлгэрэнгүй тайланд таны хариултаас бүтсэн:";
+  const items = [
+    ...c.slice(0,4).map(o=>({blur:o.q.s})),
+    {txt:"Таны сэрлийг хамгийн хүчтэй унтраадаг зүйл"},
+    {txt:"Дур хүсэл тань аяндаа төрдөг үү, эсвэл эхэлсний дараа төрдөг үү"},
+    {txt:"Хамтрагчдаа хэлэх 3 бэлэн өгүүлбэр"},
+    {txt:"Энэ 7 хоногт турших 2 алхам"}
+  ];
+  document.getElementById("r-locked").innerHTML = items.map(it=>
+    `<div class="lock"><span class="ic" aria-hidden="true">🔒</span>${it.blur?`<span class="blur" aria-label="Түгжээтэй нөхцөл">${it.blur}</span>`:`<span>${it.txt}</span>`}</div>`).join("");
+  track("paywall_view",{n});
+}
+document.getElementById("b-share").addEventListener("click",async()=>{
+  const url = location.origin && location.origin.startsWith("http") ? location.origin + "/" : location.href.split("#")[0];
+  const txt = `Би «${PROFILES[profileKey()].n}» төрөл гарлаа. Чи аль нь вэ? 5 минутын тест: ${url}`;
+  try{ await navigator.clipboard.writeText(txt); toast("Хуулагдлаа. Найздаа илгээгээрэй."); } catch(e){ toast(txt); }
+  track("share_copy");
+});
+
+/* ---------- QPay ---------- */
+const BANKS = ["Хаан банк","Голомт","ХХБ","Төрийн банк","Хас банк","Капитрон","М банк","SocialPay","Монпэй"];
+const mPay = document.getElementById("m-pay");
+let pollT=null, pollStart=0, lastManual=0;
+document.getElementById("b-pay").addEventListener("click", openPay);
+document.getElementById("b-payclose").addEventListener("click", closePay);
+document.getElementById("b-check").addEventListener("click", ()=>checkPay(true));
+document.getElementById("b-demopaid").addEventListener("click", ()=>onPaid());
+
+async function openPay(){
+  track("pay_click");
+  mPay.hidden = false;
+  document.getElementById("p-demo").hidden = CONFIG.mode!=="demo";
+  if (S.invoice && Date.now()-S.invoice.at < 20*60*1000){ startPolling(); return; } // нэг нэхэмжлэлийг дахин ашиглана
+  setStatus("wait","Нэхэмжлэл үүсгэж байна…");
+  document.getElementById("p-qr").innerHTML = ""; document.getElementById("p-banks").innerHTML = "";
+  try{
+    const inv = await createInvoice(); inv.at = Date.now(); S.invoice = inv;
+    document.getElementById("p-no").textContent = inv.ref;
+    const qr = document.getElementById("p-qr");
+    if (inv.qr_image){ const img=new Image(); img.alt="QPay QR код"; img.src="data:image/png;base64,"+inv.qr_image; qr.appendChild(img); }
+    else if (window.QRCode){ new QRCode(qr,{text:inv.qr_text,width:192,height:192,colorDark:"#1B1219",colorLight:"#ffffff"}); }
+    const urls = inv.urls && inv.urls.length ? inv.urls : BANKS.map(n=>({name:n, link:null}));
+    document.getElementById("p-banks").innerHTML = urls.map(u=> u.link
+      ? `<a class="bank" href="${u.link}" rel="noopener" style="color:inherit;text-decoration:none">${u.description||u.name}</a>`
+      : `<span class="bank">${u.name}</span>`).join("");
+    track("invoice_created");
+    startPolling();
+  }catch(e){ setStatus("err","Нэхэмжлэл үүсгэж чадсангүй. Хэсэг хүлээгээд дахин оролдоно уу."); }
+}
+function startPolling(){
+  setStatus("wait","Төлбөр хүлээж байна…");
+  pollStart = Date.now(); clearInterval(pollT); pollT = setInterval(()=>checkPay(false), CONFIG.pollMs);
+}
+function closePay(){ mPay.hidden = true; clearInterval(pollT); track("pay_close"); }
+function setStatus(kind, text){ document.getElementById("p-status").innerHTML = (kind==="wait"?'<span class="spin"></span>':"") + `<span>${text}</span>`; }
+async function createInvoice(){
+  const ref = "AS" + Date.now().toString(36).toUpperCase() + Math.random().toString(36).slice(2,6).toUpperCase();
+  if (CONFIG.mode==="demo") return {ref, invoice_id:"demo-"+ref, qr_text:"DEMO-QPAY-"+ref, urls:[]};
+  const r = await fetch(CONFIG.apiBase+"/qpay/invoice",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({ref})});
+  if (!r.ok) throw new Error("invoice");
+  return {ref, ...(await r.json())};
+}
+/* Хуудас манай серверээс төлөвийг асууна (сервер QPay-ээс давтан асуудаггүй).
+ * «Төлбөр шалгах» товч дарахад сервер QPay-ээс нэг удаа шалгана. */
+async function checkPay(manual){
+  if (!S.invoice) return;
+  if (!manual && Date.now()-pollStart > CONFIG.pollMaxMs){ clearInterval(pollT); setStatus("err","Төлсөн бол «Төлбөр шалгах» товчийг дарна уу."); return; }
+  if (CONFIG.mode==="demo"){ if (manual) setStatus("wait","Төлбөр одоогоор ороогүй байна…"); return; }
+  if (manual){ if (Date.now()-lastManual < 5000) return; lastManual = Date.now(); setStatus("wait","Шалгаж байна…"); }
+  try{
+    const r = await fetch(`${CONFIG.apiBase}/qpay/check/${encodeURIComponent(S.invoice.invoice_id)}${manual?"?verify=1":""}`);
+    const d = await r.json();
+    if (d.paid) onPaid(); else if (manual) setStatus("wait","Төлбөр одоогоор ороогүй байна. Төлсөн бол хэдэн секунд хүлээнэ үү…");
+  }catch(e){ if (manual) setStatus("err","Шалгаж чадсангүй. Дахин оролдоно уу."); }
+}
+async function onPaid(){
+  if (S.paid) return;
+  clearInterval(pollT); S.paid = true;
+  track("paid",{ref:S.invoice&&S.invoice.ref});
+  setStatus("ok","Төлбөр орлоо. Тайлан нээгдэж байна…");
+  try{
+    const summary = buildSummary();
+    let data;
+    if (CONFIG.mode==="demo"){
+      const r = await fetch("report-content.json"); data = {content: await r.json(), summary, token:null};
+    } else {
+      const r = await fetch(CONFIG.apiBase+"/report",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({invoice_id:S.invoice.invoice_id, summary})});
+      if (!r.ok) throw new Error("report"); data = await r.json();
+    }
+    if (data.token) store.set("report_token", data.token);
+    mPay.hidden = true; renderReport(data);
+  }catch(e){ S.paid=false; setStatus("err","Тайланг ачаалж чадсангүй. «Төлбөр шалгах» товчийг дахин дарна уу."); }
+}
+
+/* ---------- дэлгэрэнгүй тайлан ---------- */
+function esc(s){ return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
+function renderReport({content:C, summary:M, token}){
+  SCREENS.forEach(s => document.getElementById("s-"+s).hidden = (s!=="report")); window.scrollTo(0,0);
+  const P = PROFILES[M.pk] || PROFILES.calm, dt = C.desire[M.dk] || C.desire.unk;
+  const attn = (t,s)=> s===null ? -1 : (t==="acc" ? 4-s : s);
+  const order = Object.keys(THEMES).map(t=>({t, s:M.scores[t]??null, a:attn(t,M.scores[t]??null)})).sort((x,y)=>y.a-x.a);
+  const focus = order.filter(o=>o.s!==null).slice(0,3).map(o=>o.t);
+  const cls = (t,s)=>{ if (s===null) return "mid"; const bad = t==="acc" ? 4-s : s; return bad>=2.5?"hi":bad>=1.5?"mid":"lo"; };
+  const lab = {hi:"Анхаарах", mid:"Дунд", lo:"Хүчтэй тал"};
+  const steps = (focus.length?focus:["talk","acc"]).slice(0,2).map(t=>C.themes[t].step);
+  const says = (focus.length?focus:["talk","des","str"]).slice(0,3).map(t=>C.say[t]);
+  const link = token && location.origin.startsWith("http") ? `${location.origin}/?r=${token}` : "";
+  document.getElementById("rep").innerHTML = `
+    <header class="top"><div class="logo">Асаа<span>гч</span></div><span class="pill">Дэлгэрэнгүй тайлан</span></header>
+    ${link?`<div class="card" style="gap:10px"><b>Тайлангийн холбоосоо хадгалаарай</b><p class="small muted">Энэ холбоосоор тайлангаа 30 хоногийн турш хаанаас ч нээнэ.</p><p class="small" style="word-break:break-all" id="rep-link">${esc(link)}</p><button class="btn ghost" id="b-copylink">Холбоосыг хуулах</button></div>`:""}
+    <div class="profile fade"><div class="eyebrow">Таны төрөл</div><div class="ptype">${esc(P.n)}</div><p>${esc(C.profiles[M.pk]||"")}</p></div>
+    <div class="gaugecard tbars">
+      <div class="eyebrow">6 сэдвийн оноо (0–4)</div>
+      ${Object.keys(THEMES).map(t=>{const s=M.scores[t]??null;return `<div class="gauge"><div class="row"><b>${THEMES[t].name}</b><span class="muted" style="font-variant-numeric:tabular-nums">${s===null?"–":s.toFixed(1)}</span></div><div class="track"><div class="fill ${t==="acc"?"acc":"brk"}" style="width:${(s??0)/4*100}%"></div></div></div>`}).join("")}
+      <p class="small muted">«Сэрэл төрүүлэгч» өндөр байх нь сайн. Бусад сэдэвт өндөр оноо нь тухайн зүйл таны сэрлийг илүү их унтрааж байгааг харуулна.</p>
+    </div>
+    ${M.cond.length?`<div style="display:grid;gap:12px"><h3>Таны сэрлийг унтраадаг зүйлс, хүчтэйгээс нь</h3><ol class="do">${M.cond.filter(i=>Q[i]).map(i=>`<li><b>${esc(Q[i].s)}</b><br><span class="small muted">${THEMES[Q[i].t].name}</span></li>`).join("")}</ol></div>`:""}
+    <div style="display:grid;gap:8px"><div class="eyebrow">Таны дур хүслийн хэв маяг</div><h3>${esc(dt.n)}</h3><p class="muted">${esc(dt.d)}</p></div>
+    ${order.map(o=>`<div class="tsec"><span class="lvl ${cls(o.t,o.s)}">${o.s===null?"Тодорхойгүй":lab[cls(o.t,o.s)]}</span><h3>${THEMES[o.t].name}</h3><p class="muted">${o.s===null?"Энэ сэдвийн асуултуудад хангалттай хариулт өгөөгүй тул дүгнэлт гаргасангүй.":esc(cls(o.t,o.s)==="lo"?C.themes[o.t].lo:C.themes[o.t].hi)}</p></div>`).join("")}
+    <div style="display:grid;gap:14px"><h3>Хамтрагчдаа хэлэх 3 өгүүлбэр</h3>${says.map(s=>`<p class="quote">${esc(s)}</p>`).join("")}</div>
+    <div style="display:grid;gap:12px"><h3>Энэ 7 хоногт турших 2 алхам</h3><ol class="do">${steps.map(s=>`<li>${esc(s)}</li>`).join("")}</ol></div>
+    ${M.safe?`<div class="safe"><b>Хил хязгаарын тухай</b><p class="small">${esc(C.safe)}</p></div>`:""}
+    <p class="small muted">Энэ тайлан таны өгсөн хариултын хэв маягийг тайлбарлана. Онош биш, эмчилгээг орлохгүй.</p>`;
+  const cb = document.getElementById("b-copylink");
+  if (cb) cb.addEventListener("click", async()=>{ try{ await navigator.clipboard.writeText(link); toast("Холбоос хуулагдлаа."); }catch(e){ toast("Холбоосыг тэмдэглэж хуулна уу."); } });
+  track("report_view");
+}
+
+/* ---------- ?r=TOKEN холбоосоор тайлан нээх ---------- */
+(async function openFromLink(){
+  let token = null;
+  try{ token = new URLSearchParams(location.search).get("r"); }catch(e){}
+  if (!token || CONFIG.mode!=="live") return;
+  try{
+    const r = await fetch(`${CONFIG.apiBase}/report/${encodeURIComponent(token)}`);
+    if (!r.ok) throw new Error();
+    const d = await r.json(); S.paid = true; renderReport({...d, token});
+  }catch(e){ toast("Тайлангийн холбоосын хугацаа дууссан эсвэл буруу байна."); }
+})();
+
+/* ---------- туслах ---------- */
+function toast(t){ const d=document.createElement("div"); d.className="toast"; d.textContent=t; document.body.appendChild(d); setTimeout(()=>d.remove(),2800); }
+
+/* ---------- демо самбар (зөвхөн demo горимд) ---------- */
+const isDemo = CONFIG.mode==="demo";
+document.getElementById("d-btn").hidden = !isDemo;
+document.getElementById("demo-foot").hidden = !isDemo;
+const dPanel=document.getElementById("d-panel");
+document.getElementById("d-btn").addEventListener("click",()=>{ dPanel.hidden=!dPanel.hidden; });
+document.getElementById("d-v").textContent = S.variant;
+document.getElementById("d-fill").addEventListener("click",()=>{
+  S.answers = [3,2,2,3, 3,3,2,3, 3,3,2,1, 2,2,2,3, 3,2,3,2, 3,1,2,3]; S.shownInter={8:1,16:1}; track("demo_fill"); go("result");
+});
+document.getElementById("d-var").addEventListener("click",()=>{
+  S.variant = S.variant==="sharp"?"curious":"sharp"; store.set("ab_variant",S.variant);
+  document.getElementById("d-v").textContent=S.variant;
+  if (!document.getElementById("s-result").hidden) renderResult();
+});
+document.getElementById("d-reset").addEventListener("click",()=>{
+  S.answers=Array(Q.length).fill(null); S.idx=0; S.paid=false; S.invoice=null; S.shownInter={}; cAge.checked=cTerms.checked=false; gateOk(); go("landing");
+});
+
+track("landing_view");
+</script>
+</html>
