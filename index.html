@@ -1,4 +1,4 @@
-<!doctype html><html lang="mn"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><script>window.__CFG__={mode:"live",api:"https://uqjoeplhqoccrdaddlyh.supabase.co/functions/v1/api",ga4:"",pixel:""}</script><title>Асаагч тест</title>
+<!doctype html><html lang="mn"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><script>window.__CFG__={mode:"live",api:"https://uqjoeplhqoccrdaddlyh.supabase.co/functions/v1/api",metrics:"https://uqjoeplhqoccrdaddlyh.supabase.co/functions/v1/m",ga4:"",pixel:""}</script><title>Асаагч тест</title>
 <meta name="description" content="Таны сэрэл яагаад унтардаг вэ? 24 асуулт, 5 минут. Юу таныг асааж, юу унтраадгийг олоорой. 18+.">
 <meta property="og:title" content="Таны сэрэл яагаад унтардаг вэ?">
 <meta property="og:description" content="24 асуулт, 5 минут. Юу таныг асааж, юу унтраадгийг олоорой. 18+.">
@@ -394,7 +394,7 @@ ol.do{margin:0;padding-left:1.2rem;display:grid;gap:10px}
  * оруулж өгнө: { mode:"live", ga4:"G-...", pixel:"123..." }.
  * Сервергүй нээгдвэл (Claude-ын демо) автоматаар "demo" горимд ажиллана.
  */
-const CFG = Object.assign({mode:"demo", api:"/api", ga4:"", pixel:""}, window.__CFG__ || {});
+const CFG = Object.assign({mode:"demo", api:"/api", metrics:"", ga4:"", pixel:""}, window.__CFG__ || {});
 const CONFIG = { mode: CFG.mode, apiBase: CFG.api, price: 8900, pollMs: 3000, pollMaxMs: 10*60*1000 };
 
 /* ---------- аналитикийн скрипт (ID өгсөн үед л) ---------- */
@@ -465,8 +465,36 @@ S.variant = store.get("ab_variant");
 if (!S.variant) { S.variant = Math.random() < .5 ? "sharp" : "curious"; store.set("ab_variant",S.variant); }
 
 /* ================== АНАЛИТИК ================== */
+/* Сесс: санамсаргүй дугаар (хүнийг таних мэдээлэлгүй). Эх сурвалж: UTM ба ирсэн хаяг. */
+const SESS = (function(){
+  let ss = null; try{ ss = sessionStorage; }catch(e){}
+  const get = k => { try{ return ss && ss.getItem(k); }catch(e){ return null; } };
+  const set = (k,v) => { try{ ss && ss.setItem(k,v); }catch(e){} };
+  let sid = get("sid"); if (!sid){ sid = (crypto.randomUUID ? crypto.randomUUID() : String(Math.random()).slice(2)+Date.now()).replace(/-/g,"").slice(0,24); set("sid",sid); }
+  let src = get("src"), med = get("med"), camp = get("camp"), ref = get("ref");
+  if (src===null){
+    let p = {}; try{ p = Object.fromEntries(new URLSearchParams(location.search)); }catch(e){}
+    let rh = ""; try{ rh = document.referrer ? new URL(document.referrer).hostname : ""; }catch(e){}
+    if (rh === location.hostname) rh = "";
+    src = p.utm_source || (p.fbclid ? "facebook" : "") || (rh.includes("facebook") ? "facebook" : rh.includes("instagram") ? "instagram" : rh.includes("google") ? "google" : rh) || "";
+    med = p.utm_medium || (p.fbclid ? "paid_social" : ""); camp = p.utm_campaign || ""; ref = rh;
+    set("src",src); set("med",med); set("camp",camp); set("ref",ref);
+  }
+  const device = (window.matchMedia && matchMedia("(pointer:coarse)").matches) || innerWidth < 760 ? "mobile" : "desktop";
+  return {sid, src, med, camp, ref, device};
+})();
+const BUF = []; let bufT = null;
+function sendMetrics(row){
+  if (CONFIG.mode!=="live" || !CFG.metrics) return;
+  BUF.push(row); clearTimeout(bufT);
+  const flush = ()=>{ if (!BUF.length) return; const body = JSON.stringify(BUF.splice(0)); try{ if (!(navigator.sendBeacon && navigator.sendBeacon(CFG.metrics+"/e", body))) fetch(CFG.metrics+"/e",{method:"POST",body,keepalive:true,mode:"no-cors"}); }catch(e){} };
+  if (["paid","pay_click","quiz_complete","report_view"].includes(row.ev)) flush(); else bufT = setTimeout(flush, 1500);
+  if (!sendMetrics._bound){ sendMetrics._bound = 1; addEventListener("pagehide", flush); document.addEventListener("visibilitychange", ()=>{ if (document.visibilityState==="hidden") flush(); }); }
+}
 const LOG = [];
 function track(ev, data={}){
+  sendMetrics({ev, sid:SESS.sid, variant:S.variant, q:data.q, kind:data.kind, n:data.n, src:SESS.src, med:SESS.med, camp:SESS.camp, ref_host:SESS.ref, device:SESS.device});
+  if (ev==="q_view" || ev==="q_answer") return; // асуулт бүрийн үйл явдлыг GA/Pixel рүү илгээхгүй
   const payload = {variant:S.variant, ...data};
   LOG.push({ev, ...payload, t:new Date().toTimeString().slice(0,8)});
   try{ if (window.gtag) gtag("event", ev, payload); }catch(e){}
@@ -552,8 +580,10 @@ function renderQ(){
       <button class="link" id="q-back" ${i===0?"style='visibility:hidden'":""}>← Өмнөх</button>
       <span class="side"><button class="link" data-v="na">Хамаарахгүй</button><button class="link" data-v="skip">Алгасах</button></span>
     </div>`;
+  track("q_view",{q:i+1});
   w.querySelectorAll("[data-v]").forEach(b=>b.addEventListener("click",()=>{
     const v = b.dataset.v; S.answers[i] = (v==="na"||v==="skip") ? v : +v;
+    track("q_answer",{q:i+1, kind: v==="na"?"na":v==="skip"?"skip":"a"}); // утга биш, зөвхөн төрөл
     b.classList.add("sel"); setTimeout(next, 180);
   }));
   document.getElementById("q-back").addEventListener("click",()=>{ if (S.idx>0){S.idx--; renderQ();} });
@@ -613,7 +643,7 @@ function renderResult(){
   track("paywall_view",{n});
 }
 document.getElementById("b-share").addEventListener("click",async()=>{
-  const url = location.origin && location.origin.startsWith("http") ? location.origin + "/" : location.href.split("#")[0];
+  const url = location.origin && location.origin.startsWith("http") ? location.origin + "/?utm_source=share" : location.href.split("#")[0];
   const txt = `Би «${PROFILES[profileKey()].n}» төрөл гарлаа. Чи аль нь вэ? 5 минутын тест: ${url}`;
   try{ await navigator.clipboard.writeText(txt); toast("Хуулагдлаа. Найздаа илгээгээрэй."); } catch(e){ toast(txt); }
   track("share_copy");
@@ -724,7 +754,7 @@ function renderReport({content:C, summary:M, token}){
     ${M.safe?`<div class="safe"><b>Хил хязгаарын тухай</b><p class="small">${esc(C.safe)}</p></div>`:""}
     <p class="small muted">Энэ тайлан таны өгсөн хариултын хэв маягийг тайлбарлана. Онош биш, эмчилгээг орлохгүй.</p>`;
   const cb = document.getElementById("b-copylink");
-  if (cb) cb.addEventListener("click", async()=>{ try{ await navigator.clipboard.writeText(link); toast("Холбоос хуулагдлаа."); }catch(e){ toast("Холбоосыг тэмдэглэж хуулна уу."); } });
+  if (cb) cb.addEventListener("click", async()=>{ track("link_copy"); try{ await navigator.clipboard.writeText(link); toast("Холбоос хуулагдлаа."); }catch(e){ toast("Холбоосыг тэмдэглэж хуулна уу."); } });
   track("report_view");
 }
 
@@ -736,7 +766,7 @@ function renderReport({content:C, summary:M, token}){
   try{
     const r = await fetch(`${CONFIG.apiBase}/report/${encodeURIComponent(token)}`);
     if (!r.ok) throw new Error();
-    const d = await r.json(); S.paid = true; renderReport({...d, token});
+    const d = await r.json(); S.paid = true; track("report_reopen"); renderReport({...d, token});
   }catch(e){ toast("Тайлангийн холбоосын хугацаа дууссан эсвэл буруу байна."); }
 })();
 
@@ -762,6 +792,6 @@ document.getElementById("d-reset").addEventListener("click",()=>{
   S.answers=Array(Q.length).fill(null); S.idx=0; S.paid=false; S.invoice=null; S.shownInter={}; cAge.checked=cTerms.checked=false; gateOk(); go("landing");
 });
 
-track("landing_view");
+(function(){ let r=null; try{ r = new URLSearchParams(location.search).get("r"); }catch(e){} if (!r) track("landing_view"); })();
 </script>
 </html>

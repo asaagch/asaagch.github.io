@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="mn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Асаагч самбар</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,600&family=Onest:wght@400;500;600&display=swap">
+<style>
+/* Layout: нэг баганатай самбар — дүгнэлт → урсгал → дэлгэрэнгүй хүснэгтүүд. */
+:root{
+  --bg:#1B1219; --surface:#251923; --surface-2:#2F2130; --line:#3D2C3A;
+  --fg:#F5EAEE; --muted:#B9A4B1; --ember:#F2876B; --good:#7FC7A1; --warn:#F2C46B; --bad:#F27B7B;
+  --display:"Cormorant Garamond", Georgia, serif; --body:"Onest","Segoe UI",Arial,sans-serif; color-scheme:dark;
+}
+@media (prefers-color-scheme: light){:root:not([data-theme="dark"]){--bg:#FBF5F4;--surface:#fff;--surface-2:#F4E9EA;--line:#E7D6D9;--fg:#2A1924;--muted:#6F5A67;--ember:#C24F2E;--good:#2F8A5B;--warn:#A8720E;--bad:#B3261E;color-scheme:light}}
+:root[data-theme="light"]{--bg:#FBF5F4;--surface:#fff;--surface-2:#F4E9EA;--line:#E7D6D9;--fg:#2A1924;--muted:#6F5A67;--ember:#C24F2E;--good:#2F8A5B;--warn:#A8720E;--bad:#B3261E;color-scheme:light}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.55 var(--body);padding-inline:16px;padding-block:20px 60px}
+main{max-width:1000px;margin:0 auto;display:grid;gap:28px}
+h1{font:600 italic 2rem var(--display);margin:0}
+h2{font-size:1rem;margin:0 0 12px;font-weight:600}
+.muted{color:var(--muted)} .small{font-size:.85rem}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.ctrl{display:flex;gap:8px;flex-wrap:wrap}
+button,select,input{font:inherit;color:inherit;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:.45rem .8rem}
+button.on{border-color:var(--ember);color:var(--ember)}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px;min-width:0}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.kpi .v{font-size:1.9rem;font-weight:600;font-variant-numeric:tabular-nums;line-height:1.1}
+.kpi .l{font-size:.8rem;color:var(--muted)}
+@media (max-width:720px){.kpis{grid-template-columns:repeat(2,1fr)}}
+.insights{display:grid;gap:8px;margin:0;padding:0;list-style:none}
+.insights li{display:grid;grid-template-columns:22px 1fr;gap:8px}
+.tag{font-weight:700}
+.tag.bad{color:var(--bad)} .tag.warn{color:var(--warn)} .tag.good{color:var(--good)} .tag.info{color:var(--muted)}
+.funnel{display:grid;gap:6px}
+.frow{display:grid;grid-template-columns:150px 1fr 120px;gap:10px;align-items:center;font-size:.88rem}
+.frow .bar{height:14px;background:var(--surface-2);border-radius:4px;overflow:hidden}
+.frow .bar i{display:block;height:100%;background:var(--ember);border-radius:0 4px 4px 0}
+.frow .num{font-variant-numeric:tabular-nums;text-align:right}
+.drop{color:var(--bad);font-size:.78rem}
+@media (max-width:560px){.frow{grid-template-columns:110px 1fr 90px}}
+.tw{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:.86rem;font-variant-numeric:tabular-nums}
+th,td{padding:7px 8px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}
+th:first-child,td:first-child{text-align:left}
+th{color:var(--muted);font-weight:500}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media (max-width:760px){.grid2{grid-template-columns:1fr}}
+.days{display:flex;align-items:flex-end;gap:3px;height:120px;border-bottom:1px solid var(--line)}
+.days div{flex:1;background:var(--ember);border-radius:4px 4px 0 0;min-height:2px;position:relative}
+.days div:hover{filter:brightness(1.2)}
+.axis{display:flex;justify-content:space-between;font-size:.72rem;color:var(--muted);margin-top:4px}
+.login{max-width:420px;margin:12vh auto 0;display:grid;gap:12px}
+.err{color:var(--bad)}
+</style>
+</head>
+<body>
+<main>
+  <div class="login card" id="login">
+    <h1>Асаагч самбар</h1>
+    <label for="k" class="small muted">Админ түлхүүр</label>
+    <input id="k" type="password" autocomplete="current-password">
+    <button id="go">Нэвтрэх</button>
+    <p class="err small" id="lerr" hidden>Түлхүүр буруу байна.</p>
+  </div>
+
+  <div id="app" hidden style="display:grid;gap:28px">
+    <div class="top">
+      <h1>Асаагч самбар</h1>
+      <div class="ctrl" id="range">
+        <button data-d="1">Өнөөдөр</button><button data-d="7" class="on">7 хоног</button><button data-d="30">30 хоног</button><button data-d="90">90 хоног</button>
+        <button id="out">Гарах</button>
+      </div>
+    </div>
+    <p class="small muted" id="gen"></p>
+
+    <section class="kpis" id="kpis"></section>
+
+    <section class="card"><h2>Анхаарах зүйлс</h2><ul class="insights" id="ins"></ul></section>
+
+    <section class="card"><h2>Хэрэглэгчийн урсгал (сесс)</h2><div class="funnel" id="funnel"></div>
+      <p class="small muted" style="margin-top:10px">Улаан тоо: өмнөх алхмаас орхисон хувь.</p></section>
+
+    <section class="card"><h2>Өдөр бүрийн зочид</h2><div class="days" id="days"></div><div class="axis" id="daxis"></div>
+      <div class="tw" style="margin-top:12px"><table id="dtab"></table></div></section>
+
+    <section class="card"><h2>Асуулт бүрийн үзүүлэлт</h2><p class="small muted">Үргэлжлүүлсэн = дараагийн асуултыг харсан хувь. Алгассан ба «хамаарахгүй» өндөр бол асуулт эвгүй эсвэл ойлгомжгүй байж магадгүй.</p><div class="tw"><table id="qtab"></table></div></section>
+
+    <div class="grid2">
+      <section class="card"><h2>A/B хувилбар</h2><div class="tw"><table id="vtab"></table></div><p class="small muted" id="vnote"></p></section>
+      <section class="card"><h2>Төлбөр</h2><div class="tw"><table id="ptab"></table></div></section>
+    </div>
+    <div class="grid2">
+      <section class="card"><h2>Эх сурвалж</h2><div class="tw"><table id="stab"></table></div></section>
+      <section class="card"><h2>Төхөөрөмж</h2><div class="tw"><table id="devtab"></table></div></section>
+    </div>
+    <div class="grid2">
+      <section class="card"><h2>Цаг (Улаанбаатар)</h2><div class="tw"><table id="htab"></table></div></section>
+      <section class="card"><h2>Төлсөн хэрэглэгчдийн төрөл</h2><div class="tw"><table id="prtab"></table></div></section>
+    </div>
+  </div>
+</main>
+<script>
+const API = "https://uqjoeplhqoccrdaddlyh.supabase.co/functions/v1/m";
+const PRICE = 8900;
+const store = {get:k=>{try{return localStorage.getItem(k)}catch(e){return null}}, set:(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}}, del:k=>{try{localStorage.removeItem(k)}catch(e){}}};
+let KEY = store.get("ak"), DAYS = 7;
+const $ = id => document.getElementById(id);
+const fmt = n => (n==null||isNaN(n)) ? "–" : Number(n).toLocaleString("en-US").replace(/,/g," ");
+const pct = (a,b) => b ? (a/b*100) : null;
+const pf = x => x==null ? "–" : x.toFixed(1)+"%";
+const esc = s => String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const PROF = {easy:"Амархан асдаг", sens:"Мэдрэмтгий", calm:"Тайван гал", cond:"Нөхцөл шаарддаг"};
+const STEPS = [
+  ["landing_view","Нүүр хуудас"],["quiz_start_click","«Эхлэх» дарсан"],["quiz_start","18+ давсан"],
+  ["q8_reached","8-р асуулт"],["q16_reached","16-р асуулт"],["quiz_complete","Дууссан"],
+  ["paywall_view","Үр дүн харсан"],["pay_click","Төлөх дарсан"],["invoice_created","QR гарсан"],["paid","Төлсөн"]
+];
+
+async function load(){
+  const r = await fetch(`${API}/stats?days=${DAYS}`, {headers:{"x-admin-key":KEY}});
+  if (r.status===401) throw new Error("401");
+  if (!r.ok) throw new Error("load");
+  return r.json();
+}
+function table(id, head, rows){ $(id).innerHTML = `<tr>${head.map(h=>`<th>${h}</th>`).join("")}</tr>` + (rows.length ? rows.map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join("")}</tr>`).join("") : `<tr><td colspan="${head.length}" class="muted">Өгөгдөл алга</td></tr>`); }
+
+/* хоёр хувийн ялгааны z-тест */
+function ztest(x1,n1,x2,n2){ if(!n1||!n2) return null; const p=(x1+x2)/(n1+n2); const se=Math.sqrt(p*(1-p)*(1/n1+1/n2)); if(!se) return null; const z=(x1/n1-x2/n2)/se; return z; }
+
+function render(d){
+  const F = d.funnel || {}, P = d.payments || {};
+  const visitors = F.landing_view || 0, paid = P.paid || 0, revenue = P.revenue || 0;
+  $("gen").textContent = `Сүүлийн ${d.days} хоног · ${new Date(d.generated_at).toLocaleString("mn-MN")}`;
+  $("kpis").innerHTML = [
+    ["Зочин (сесс)", fmt(visitors)],
+    ["Төлбөр", fmt(paid)],
+    ["Орлого", fmt(revenue)+"₮"],
+    ["Зочин бүрийн орлого", visitors ? fmt(Math.round(revenue/visitors))+"₮" : "–"]
+  ].map(([l,v])=>`<div class="card kpi"><div class="v">${v}</div><div class="l">${l}</div></div>`).join("");
+
+  /* урсгал */
+  const top = Math.max(1, ...STEPS.map(([k])=>F[k]||0));
+  let prev = null, worst = null;
+  $("funnel").innerHTML = STEPS.map(([k,l])=>{
+    const v = F[k]||0; const drop = prev ? 100 - pct(v,prev) : null;
+    if (prev && prev>=20 && drop!=null && (!worst || drop>worst.drop)) worst = {l, drop, from:prev, to:v};
+    const html = `<div class="frow" title="${l}: ${v}"><span>${l}</span><span class="bar"><i style="width:${v/top*100}%"></i></span><span class="num">${fmt(v)} ${drop!=null && prev ? `<span class="drop">−${drop.toFixed(0)}%</span>`:""}</span></div>`;
+    prev = v; return html;
+  }).join("");
+
+  /* өдрүүд */
+  const days = d.daily || []; const dmax = Math.max(1, ...days.map(x=>x.visitors));
+  $("days").innerHTML = days.map(x=>`<div style="height:${x.visitors/dmax*100}%" title="${x.day}: ${x.visitors} зочин, ${x.completed} дууссан, ${x.paid} төлсөн"></div>`).join("");
+  $("daxis").innerHTML = days.length ? `<span>${days[0].day}</span><span>${days[days.length-1].day}</span>` : "";
+  table("dtab", ["Өдөр","Зочин","Дууссан","Төлсөн","Хөрвүүлэлт"], days.slice().reverse().map(x=>[x.day, fmt(x.visitors), fmt(x.completed), fmt(x.paid), pf(pct(x.paid,x.visitors))]));
+
+  /* асуултууд */
+  const qs = d.questions || []; const qmap = Object.fromEntries(qs.map(q=>[q.q,q]));
+  const flagsQ = [];
+  table("qtab", ["№","Харсан","Үргэлжлүүлсэн","Алгассан","Хамаарахгүй"], qs.map(q=>{
+    const next = q.q<24 ? (qmap[q.q+1]?.viewed||0) : (F.quiz_complete||0);
+    const cont = pct(next, q.viewed), tot = q.answered+q.skipped+q.na, sk = pct(q.skipped,tot), na = pct(q.na,tot);
+    if (q.viewed>=30 && cont!=null && cont<90) flagsQ.push(`${q.q}-р асуулт дээр ${(100-cont).toFixed(0)}% нь орхисон`);
+    if (tot>=30 && (sk||0)+(na||0)>25) flagsQ.push(`${q.q}-р асуултыг ${((sk||0)+(na||0)).toFixed(0)}% нь алгассан/хамаарахгүй гэсэн`);
+    return [q.q, fmt(q.viewed), pf(cont), pf(sk), pf(na)];
+  }));
+
+  /* A/B */
+  const vs = d.variants || []; const vn = {sharp:"Хурц", curious:"Сониуч"};
+  table("vtab", ["Хувилбар","Үр дүн харсан","Төлөх дарсан","Төлсөн","Хөрвүүлэлт"], vs.map(v=>[vn[v.variant]||v.variant, fmt(v.paywall), fmt(v.pay_click), fmt(v.paid), pf(pct(v.paid,v.paywall))]));
+  const a = vs.find(v=>v.variant==="sharp"), b = vs.find(v=>v.variant==="curious");
+  let abMsg = "Хувилбар бүр 300-аас доошгүй хүнд үр дүн харуулсны дараа дүгнэнэ.";
+  let abIns = null;
+  if (a && b){
+    const z = ztest(a.paid,a.paywall,b.paid,b.paywall);
+    if (a.paywall>=300 && b.paywall>=300 && z!=null){
+      if (Math.abs(z)>=1.96){ const win = z>0 ? "Хурц" : "Сониуч"; abMsg = `«${win}» хувилбар статистикийн хувьд илүү (z=${z.toFixed(2)}). Нөгөөг нь унтраах боломжтой.`; abIns = ["good", abMsg]; }
+      else abMsg = `Одоогоор ялгаа статистикийн хувьд батлагдаагүй (z=${z.toFixed(2)}). Үргэлжлүүлэн цуглуулна.`;
+    } else abMsg = `Өгөгдөл хүрэлцэхгүй: хурц ${a.paywall}/300, сониуч ${b.paywall}/300.`;
+  }
+  $("vnote").textContent = abMsg;
+
+  /* төлбөр */
+  const qrToPaid = pct(paid, P.invoices);
+  table("ptab", ["Үзүүлэлт","Утга"], [
+    ["Үүссэн нэхэмжлэл", fmt(P.invoices)], ["Төлөгдсөн", fmt(paid)],
+    ["QR → төлбөр", pf(qrToPaid)],
+    ["Төлөх хүртэлх хугацаа (медиан)", P.median_min_to_pay!=null ? P.median_min_to_pay.toFixed(1)+" мин" : "–"],
+    ["Тайлан дахин нээсэн", fmt(F.report_reopen||0)],
+    ["Хуваалцах дарсан", fmt(F.share_copy||0)]
+  ]);
+
+  /* эх сурвалж, төхөөрөмж, цаг, профайл */
+  table("stab", ["Эх сурвалж","Зочин","Төлсөн","Хөрвүүлэлт","Зочин бүрийн орлого"], (d.sources||[]).map(s=>[esc(s.src), fmt(s.visitors), fmt(s.paid), pf(pct(s.paid,s.visitors)), s.visitors?fmt(Math.round(s.paid*PRICE/s.visitors))+"₮":"–"]));
+  table("devtab", ["Төхөөрөмж","Зочин","Төлсөн","Хөрвүүлэлт"], (d.devices||[]).map(s=>[s.device==="mobile"?"Утас":s.device==="desktop"?"Компьютер":"?", fmt(s.visitors), fmt(s.paid), pf(pct(s.paid,s.visitors))]));
+  table("htab", ["Цаг","Зочин","Төлсөн"], (d.hourly||[]).map(h=>[String(h.hour).padStart(2,"0")+":00", fmt(h.visitors), fmt(h.paid)]));
+  const pr = d.profiles || {}; const prt = Object.values(pr).reduce((s,n)=>s+n,0);
+  table("prtab", ["Төрөл","Тоо","Хувь"], Object.entries(pr).sort((x,y)=>y[1]-x[1]).map(([k,n])=>[PROF[k]||esc(k), fmt(n), pf(pct(n,prt))]));
+
+  /* дүгнэлт */
+  const ins = [];
+  if (visitors < 100) ins.push(["info", `Зочин ${visitors} байна. 100-аас бага үед хувь хэмжээ санамсаргүй хэлбэлзэлтэй тул том шийдвэр гаргахгүй.`]);
+  if (worst) ins.push(["bad", `Хамгийн их орхилт: «${worst.l}» алхам, ${worst.drop.toFixed(0)}% (${worst.from} → ${worst.to}). Эхлээд энэ алхмыг сайжруул.`]);
+  flagsQ.slice(0,3).forEach(f=>ins.push(["warn", f]));
+  if (P.invoices>=10 && qrToPaid!=null && qrToPaid<40) ins.push(["warn", `QR гарсан хүмүүсийн ${qrToPaid.toFixed(0)}% л төлсөн. Үнэ эсвэл төлбөрийн алхамд саад байж магадгүй.`]);
+  const srcs = (d.sources||[]).filter(s=>s.visitors>=50).map(s=>({...s, rpv:s.paid*PRICE/s.visitors})).sort((x,y)=>y.rpv-x.rpv);
+  if (srcs.length>=2) ins.push(["info", `Хамгийн ашигтай суваг: «${srcs[0].src}» (зочин бүрээс ${Math.round(srcs[0].rpv)}₮). Хамгийн сул: «${srcs[srcs.length-1].src}» (${Math.round(srcs[srcs.length-1].rpv)}₮).`]);
+  if (abIns) ins.push(abIns);
+  if (!ins.length) ins.push(["good","Онцгой анхаарах асуудал илрээгүй."]);
+  const icon = {bad:"!", warn:"▲", good:"✓", info:"i"};
+  $("ins").innerHTML = ins.map(([t,m])=>`<li><span class="tag ${t}">${icon[t]}</span><span>${esc(m)}</span></li>`).join("");
+}
+
+async function refresh(){
+  try{ const d = await load(); $("login").hidden=true; $("app").hidden=false; render(d); }
+  catch(e){ if (e.message==="401"){ store.del("ak"); KEY=null; $("app").hidden=true; $("login").hidden=false; $("lerr").hidden=false; } else { $("gen").textContent = "Ачаалж чадсангүй. Дахин оролдоно уу."; } }
+}
+$("go").addEventListener("click",()=>{ KEY = $("k").value.trim(); if (!KEY) return; store.set("ak",KEY); refresh(); });
+$("k").addEventListener("keydown",e=>{ if (e.key==="Enter") $("go").click(); });
+$("out").addEventListener("click",()=>{ store.del("ak"); location.reload(); });
+document.querySelectorAll("#range [data-d]").forEach(b=>b.addEventListener("click",()=>{ DAYS=+b.dataset.d; document.querySelectorAll("#range [data-d]").forEach(x=>x.classList.toggle("on",x===b)); refresh(); }));
+if (KEY) refresh();
+</script>
+</body>
+</html>
