@@ -154,7 +154,15 @@ footer{padding-block:40px 60px;border-top:1px solid var(--line);color:var(--mute
 .qr{background:#fff;border-radius:16px;padding:14px;justify-self:center;width:220px;height:220px;display:grid;place-items:center}
 .qr img,.qr canvas{width:192px!important;height:192px!important}
 .banks{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-.bank{background:var(--surface-2);border:1px solid var(--line);border-radius:12px;padding:.7rem .4rem;font-size:.8rem;text-align:center}
+.bank{background:var(--surface-2);border:1px solid var(--line);border-radius:12px;padding:.6rem .35rem;font-size:.78rem;line-height:1.2;text-align:center;min-height:64px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px}
+a.bank:active{border-color:var(--ember)}
+.bank img{width:30px;height:30px;border-radius:8px;object-fit:contain;background:#fff}
+.q1card{margin-top:22px;background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:18px;display:grid;gap:10px}
+.q1card .q1text{font-family:var(--display);font-size:clamp(1.35rem,5vw,1.6rem);font-weight:600;line-height:1.2}
+.q1card .opt{padding:.72rem 1rem;font-size:.98rem}
+.q1card .row{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.lock.open{border-style:solid;border-color:color-mix(in srgb,var(--ember) 45%,var(--line))}
+.lock.open .ic{color:var(--ember);font-weight:700}
 .status{display:flex;gap:10px;align-items:center;font-size:.92rem;color:var(--muted)}
 .spin{width:16px;height:16px;border-radius:50%;border:2px solid var(--line);border-top-color:var(--ember);animation:sp 1s linear infinite}
 @keyframes sp{to{transform:rotate(360deg)}}
@@ -201,11 +209,13 @@ ol.do{margin:0;padding-left:1.2rem;display:grid;gap:10px}
     <div class="hero">
       <div>
         <div class="eyebrow">Сэрлийн хэв маягийн тест</div>
-        <h1 style="margin-top:14px">Таны сэрэл яагаад <em>унтардаг</em> вэ?</h1>
-        <p class="lead">Хүн бүрт сэрэл төрүүлдэг зүйлс, сэрлийг унтраадаг зүйлс бий. Хариултаараа өөрийгөө юу асааж, юу унтрааж байгааг хараарай.</p>
-        <div class="cta">
-          <button class="btn" id="b-start" aria-describedby="start-note">Үнэгүй тестээ эхлэх</button>
-          <span class="small muted" id="start-note">24 асуулт · ойролцоогоор 5 минут · товч үр дүн үнэгүй</span>
+        <h1 style="margin-top:14px" id="hero-h">Таны сэрэл яагаад <em>унтардаг</em> вэ?</h1>
+        <p class="lead" id="hero-lead">Хүн бүрт сэрэл төрүүлдэг зүйлс, сэрлийг унтраадаг зүйлс бий. Хариултаараа өөрийгөө юу асааж, юу унтрааж байгааг хараарай.</p>
+        <div class="q1card" id="hero-q" role="group" aria-labelledby="hero-qtext" aria-describedby="start-note">
+          <div class="row"><span class="frame">1 / 24 · Ерөнхийдөө</span><span class="small muted">Үнэгүй</span></div>
+          <p class="q1text" id="hero-qtext"></p>
+          <div class="opts" id="hero-opts"></div>
+          <div class="row"><span class="small muted" id="start-note">Хариултаа сонгоход тест эхэлнэ · 24 асуулт · ойролцоогоор 5 минут · товч үр дүн үнэгүй</span><button class="link small" data-hv="na">Хамаарахгүй</button></div>
         </div>
       </div>
       <div class="gaugecard" aria-label="Жишээ үр дүн">
@@ -310,6 +320,7 @@ ol.do{margin:0;padding-left:1.2rem;display:grid;gap:10px}
       <h2 id="gate-h" tabindex="-1">Эхлэхийн өмнө нэг баталгаажуулалт</h2>
       <label class="checkrow" for="c-age"><input type="checkbox" id="c-age" aria-describedby="gate-skip"><span>Би 18 нас хүрсэн бөгөөд энэ тест онош биш гэдгийг ойлгож байна.</span></label>
       <p class="small muted" id="gate-skip">Хариулахыг хүсэхгүй асуултаа алгасаж болно.</p>
+      <p class="small" id="gate-saved" hidden>1-р асуултын хариулт тань хадгалагдлаа.</p>
       <button class="btn block" id="b-gate" disabled aria-describedby="gate-help">1-р асуулт руу орох</button>
       <p class="help" id="gate-help" role="status">Үргэлжлүүлэхийн тулд 18+ баталгаажуулалтыг сонгоно уу.</p>
     </div>
@@ -375,8 +386,10 @@ ol.do{margin:0;padding-left:1.2rem;display:grid;gap:10px}
     </div>
     <p class="small muted" id="pay-d">QR код уншуулах эсвэл банкны аппыг сонгоно уу. QPay төлбөрийг баталгаажуулмагц энэ дэлгэц дээр тайлан автоматаар нээгдэнэ.</p>
     <div class="inv"><span>Нэхэмжлэл <b id="p-no">…</b></span><span>Дүн <b>8,900₮</b></span></div>
-    <div class="qr" id="p-qr" aria-label="QPay QR код"></div>
+    <div id="p-qrbox"><div class="qr" id="p-qr" aria-label="QPay QR код"></div></div>
+    <p class="small" id="p-banks-h" style="font-weight:600">Банкны аппаа сонгоно уу</p>
     <div class="banks" id="p-banks"></div>
+    <button class="link small" id="b-showqr" hidden aria-expanded="false" aria-controls="p-qrbox">Өөр төхөөрөмжөөр уншуулах QR код харуулах</button>
     <div class="status" id="p-status" role="status" aria-live="polite"><span class="spin"></span><span>Төлбөр хүлээж байна…</span></div>
     <button class="btn ghost block" id="b-check">Төлбөр шалгах</button>
     <details class="small" style="padding-block:4px;border:0">
@@ -579,16 +592,40 @@ const SCREENS = ["landing","gate","quiz","result","report"];
 function go(name){
   SCREENS.forEach(s => document.getElementById("s-"+s).hidden = (s!==name));
   window.scrollTo(0,0);
-  if (name==="gate"){ track("consent_viewed"); const h=document.getElementById("gate-h"); h && h.focus({preventScroll:true}); }
+  if (name==="gate"){ gatePrep(); track("consent_viewed"); const h=document.getElementById("gate-h"); h && h.focus({preventScroll:true}); }
   if (name==="quiz") renderQ();
   if (name==="result") renderResult();
 }
 document.querySelectorAll("[data-go]").forEach(b=>b.addEventListener("click",()=>go(b.dataset.go)));
-["b-start","b-start2"].forEach(id=>document.getElementById(id).addEventListener("click",()=>{track("landing_cta_clicked"); go("gate");}));
+document.getElementById("b-start2").addEventListener("click",()=>{track("landing_cta_clicked"); go("gate");});
+/* нүүрний 1-р асуулт: хариулахад тест эхэлнэ (оноо, хариултын бүтэц хэвээр — S.answers[0]) */
+function renderHeroQ(){
+  document.getElementById("hero-qtext").textContent = Q[0].x;
+  const cur = S.answers[0];
+  document.getElementById("hero-opts").innerHTML = SCALE.map((s,k)=>`<button class="opt${cur===k?" sel":""}" data-hv="${k}"><span>${s}</span><span class="dots">${[0,1,2,3].map(d=>`<i class="${d<k?"on":""}"></i>`).join("")}</span></button>`).join("");
+}
+document.getElementById("hero-q").addEventListener("click", e=>{
+  const b = e.target.closest("[data-hv]"); if (!b) return;
+  const v = b.dataset.hv; S.answers[0] = v==="na" ? "na" : +v;
+  document.querySelectorAll("#hero-q [data-hv]").forEach(x=>x.classList.toggle("sel", x===b));
+  track("landing_cta_clicked"); track("q_view",{q:1}); track("q_answer",{q:1, kind: v==="na"?"na":"a"});
+  setTimeout(()=>go("gate"), 180);
+});
+renderHeroQ();
+/* зарын мессежтэй таарах гарчиг (car_a / car_b); бусад тохиолдолд үндсэн гарчиг */
+(function heroMatch(){
+  const H = {
+    car_a: ["Асуудал <em>хүсэлдээ</em> биш байж магадгүй", "Олон эмэгтэй өөрийгөө хүсэл багатай гэж боддог. Олонтаа сэрлийг унтраадаг зүйлс илүү хүчтэй ажилладаг. Таных юу болохыг хариултаараа хараарай."],
+    car_b: ["Таны сэрэл <em>4 хэв маягийн</em> аль нь вэ?", "Амархан асдаг, Мэдрэмтгий, Тайван гал, Нөхцөл шаарддаг. Аль нь таных болох, юу таныг асааж, юу унтраадгийг хараарай."]
+  }[SESS.camp];
+  if (!H) return;
+  document.getElementById("hero-h").innerHTML = H[0]; document.getElementById("hero-lead").textContent = H[1];
+})();
 const cAge=document.getElementById("c-age"), bGate=document.getElementById("b-gate"), gHelp=document.getElementById("gate-help");
 function gateOk(){ bGate.disabled = !cAge.checked; gHelp.hidden = cAge.checked; }
+function gatePrep(){ const has = S.answers[0]!=null; document.getElementById("gate-saved").hidden = !has; bGate.textContent = has ? "2-р асуулт руу орох" : "1-р асуулт руу орох"; }
 cAge.addEventListener("change",gateOk);
-bGate.addEventListener("click",()=>{ if (bGate.disabled) return; track("consent_completed"); S.idx=0; S.started=false; go("quiz"); });
+bGate.addEventListener("click",()=>{ if (bGate.disabled) return; track("consent_completed"); S.idx = S.answers[0]!=null ? 1 : 0; S.started=false; go("quiz"); });
 
 /* ---------- тест ---------- */
 function renderQ(){
@@ -606,7 +643,7 @@ function renderQ(){
       <span class="side"><button class="link" data-v="na">Хамаарахгүй</button><button class="link" data-v="skip">Алгасах</button></span>
     </div>`;
   track("q_view",{q:i+1});
-  if (i===0 && !S.started){ S.started = true; track("quiz_started"); }
+  if (!S.started){ S.started = true; track("quiz_started"); }
   w.querySelectorAll("[data-v]").forEach(b=>b.addEventListener("click",()=>{
     const v = b.dataset.v; S.answers[i] = (v==="na"||v==="skip") ? v : +v;
     track("q_answer",{q:i+1, kind: v==="na"?"na":v==="skip"?"skip":"a"}); // утга биш, зөвхөн төрөл
@@ -660,10 +697,12 @@ function renderResult(){
   const c = conditions(), n = c.length;
   document.getElementById("r-count").textContent = n>0 ? T("count.some",{n}) : T("count.none");
   const items = [
-    ...c.slice(0,3).map(o=>({blur:o.q.s})),
+    ...c.slice(1,3).map(o=>({blur:o.q.s})),
     ...OFFER_ITEMS.map(txt=>({txt}))
   ];
-  document.getElementById("r-locked").innerHTML = items.map(it=>
+  /* №1 нөхцлийн нэрийг үнэгүй харуулна; тайлбар, шалтгаан, алхам нь тайланд */
+  const top = c[0] ? `<div class="lock open"><span class="ic" aria-hidden="true">1</span><span><span class="small muted">Таны сэрлийг хамгийн хүчтэй саатуулж буй нөхцөл</span><br><b>${esc(c[0].q.s)}</b><br><span class="small muted">Яагаад ингэдэг, юу хийж болохыг тайланд тайлбарлана.</span></span></div>` : "";
+  document.getElementById("r-locked").innerHTML = top + items.map(it=>
     `<div class="lock"><span class="ic" aria-hidden="true">🔒</span>${it.blur?`<span class="blur" role="img" aria-label="Түгжээтэй нөхцөл"><span aria-hidden="true">${esc(it.blur)}</span></span>`:`<span>${it.txt}</span>`}</div>`).join("");
   updateResume();
   trackOnce("paid_offer_viewed",{n});
@@ -701,6 +740,22 @@ document.getElementById("b-pay").addEventListener("click", ()=>{ track("paid_cta
 document.getElementById("b-payclose").addEventListener("click", closePay);
 bCheck.addEventListener("click", ()=>{ if (payState==="invfail") openPay(true); else checkPay(true); });
 document.getElementById("b-demopaid").addEventListener("click", ()=>onPaid());
+const IS_MOB = SESS.device==="mobile";
+const qrBox = document.getElementById("p-qrbox"), bShowQr = document.getElementById("b-showqr");
+bShowQr.addEventListener("click", ()=>{ const open = qrBox.hidden; qrBox.hidden = !open; bShowQr.setAttribute("aria-expanded", String(open)); bShowQr.textContent = open ? "QR кодыг нуух" : "Өөр төхөөрөмжөөр уншуулах QR код харуулах"; });
+document.getElementById("p-banks").addEventListener("click", e=>{ if (e.target.closest("a.bank")) track("bank_app_opened"); });
+/* банкны аппаас буцаж ирэхэд төлбөрийг шууд шалгана */
+document.addEventListener("visibilitychange", ()=>{ if (document.visibilityState==="visible" && !mPay.hidden && S.invoice && !S.paid) setTimeout(()=>checkPay(true), 600); });
+/* утсан дээр: банкны апп эхэнд, QR нугалагдсан; компьютер дээр QR эхэнд */
+function layoutPay(hasLinks){
+  const mob = IS_MOB && hasLinks;
+  qrBox.hidden = mob; bShowQr.hidden = !mob; bShowQr.setAttribute("aria-expanded","false");
+  bShowQr.textContent = "Өөр төхөөрөмжөөр уншуулах QR код харуулах";
+  document.getElementById("p-banks-h").textContent = mob ? "Банкны аппаа сонгоно уу" : "Эсвэл утсан дээрээ банкны аппаа сонгоно уу";
+  document.getElementById("pay-d").textContent = mob
+    ? "Банкны аппаа сонгоод төлбөрөө баталгаажуулна уу. Энэ хуудас руу буцаж ирэхэд тайлан автоматаар нээгдэнэ."
+    : "QR код уншуулах эсвэл банкны аппыг сонгоно уу. QPay төлбөрийг баталгаажуулмагц энэ дэлгэц дээр тайлан автоматаар нээгдэнэ.";
+}
 /* модал: фокусыг дотор нь барих, Esc-ээр хаах, хаахад өмнөх товч руу буцаах */
 mPay.addEventListener("keydown", e=>{
   if (e.key==="Escape"){ e.preventDefault(); closePay(); return; }
@@ -725,7 +780,7 @@ async function openPay(retry){
   S.invoice = null;
   setState("loading","Нэхэмжлэл үүсгэж байна…");
   document.getElementById("p-no").textContent = "…";
-  document.getElementById("p-qr").innerHTML = ""; document.getElementById("p-banks").innerHTML = "";
+  document.getElementById("p-qr").innerHTML = ""; document.getElementById("p-banks").innerHTML = ""; layoutPay(false); qrBox.hidden = IS_MOB;
   try{
     const inv = await createInvoice(); inv.at = Date.now(); S.invoice = inv;
     document.getElementById("p-no").textContent = inv.ref;
@@ -733,9 +788,11 @@ async function openPay(retry){
     if (inv.qr_image){ const img=new Image(); img.alt="QPay QR код"; img.src="data:image/png;base64,"+inv.qr_image; qr.appendChild(img); }
     else if (window.QRCode){ new QRCode(qr,{text:inv.qr_text,width:192,height:192,colorDark:"#1B1219",colorLight:"#ffffff"}); }
     const urls = inv.urls && inv.urls.length ? inv.urls : BANKS.map(n=>({name:n, link:null}));
+    const safeLogo = l => typeof l==="string" && /^https:\/\//.test(l) ? l : "";
     document.getElementById("p-banks").innerHTML = urls.map(u=> u.link
-      ? `<a class="bank" href="${esc(u.link)}" rel="noopener" style="color:inherit;text-decoration:none">${esc(u.description||u.name)}</a>`
+      ? `<a class="bank" href="${esc(u.link)}" rel="noopener" style="color:inherit;text-decoration:none">${safeLogo(u.logo)?`<img src="${esc(u.logo)}" alt="" loading="lazy" onerror="this.remove()">`:""}<span>${esc(u.description||u.name)}</span></a>`
       : `<span class="bank">${esc(u.name)}</span>`).join("");
+    layoutPay(urls.some(u=>u.link));
     track("invoice_created");
     startPolling();
   }catch(e){ track("payment_failed",{n:1}); setState("invfail","Нэхэмжлэл үүсгэж чадсангүй. Сүлжээгээ шалгаад «Дахин оролдох» товчийг дарна уу."); }
@@ -882,7 +939,7 @@ document.getElementById("d-var").addEventListener("click",()=>{
   if (!document.getElementById("s-result").hidden) renderResult();
 });
 document.getElementById("d-reset").addEventListener("click",()=>{
-  S.answers=Array(Q.length).fill(null); S.idx=0; S.paid=false; S.invoice=null; S.shownInter={}; cAge.checked=false; gateOk(); S.started=S.completed=S.purchased=false; ONCE.clear(); go("landing");
+  S.answers=Array(Q.length).fill(null); S.idx=0; S.paid=false; S.invoice=null; S.shownInter={}; cAge.checked=false; gateOk(); renderHeroQ(); S.started=S.completed=S.purchased=false; ONCE.clear(); go("landing");
 });
 
 (function(){ let r=null; try{ r = new URLSearchParams(location.search).get("r"); }catch(e){} if (!r) track("landing_view"); })();
