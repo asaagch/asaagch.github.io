@@ -146,7 +146,7 @@ function render(d){
   $("gen").textContent = `Сүүлийн ${d.days} хоног · ${new Date(d.generated_at).toLocaleString("mn-MN")}`;
   $("kpis").innerHTML = [
     ["Зочин (сесс)", fmt(visitors)],
-    ["Төлбөр", fmt(paid)],
+    ["Төлбөр"+(P.test_paid ? ` <span class="small muted">(+${P.test_paid} туршилт хассан)</span>` : ""), fmt(paid)],
     ["Орлого", fmt(revenue)+"₮"],
     ["Зочин бүрийн орлого", visitors ? fmt(Math.round(revenue/visitors))+"₮" : "–"]
   ].map(([l,v])=>`<div class="card kpi"><div class="v">${v}</div><div class="l">${l}</div></div>`).join("");

@@ -902,7 +902,7 @@ async function createInvoice(){
   /* claim: энэ хөтчид л байх нэг удаагийн нууц. Сервер зөвхөн хэшийг нь хадгална; тайлан авахад нууцыг шаардана. */
   const claim = [...crypto.getRandomValues(new Uint8Array(32))].map(x=>x.toString(16).padStart(2,"0")).join("");
   if (CONFIG.mode==="demo") return {ref, claim, invoice_id:"demo-"+ref, qr_text:"DEMO-QPAY-"+ref, urls:[]};
-  const r = await fetch(CONFIG.apiBase+"/qpay/invoice",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({ref, claim_hash: await sha256hex(claim)})});
+  const r = await fetch(CONFIG.apiBase+"/qpay/invoice",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({ref, claim_hash: await sha256hex(claim), test: SESS.src==="test"})});
   if (!r.ok) throw new Error("invoice");
   const d = await r.json();
   return {ref, claim, invoice_id:d.invoice_id, qr_text:d.qr_text, qr_image:d.qr_image, urls:d.urls||[]};
