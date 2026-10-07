@@ -86,6 +86,8 @@ th{color:var(--muted);font-weight:500}
       <p class="small" id="fnote" style="margin-top:6px;color:#b26b00"></p>
       <details style="margin-top:10px"><summary class="small">Шат бүр яг юуг хэмждэг вэ?</summary><div class="tw"><table id="fdef"></table></div></details></section>
 
+    <section class="card"><h2>Сайтын хувилбараар</h2><p class="small muted">Өөрчлөлтийн өмнө ба дараах урсгалыг харьцуулна. «(хувилбаргүй)» = хувилбар бүртгэж эхлэхээс өмнөх өгөгдөл.</p><div class="tw"><table id="vertab"></table></div></section>
+
     <section class="card"><h2>Өдөр бүрийн зочид</h2><div class="days" id="days"></div><div class="axis" id="daxis"></div>
       <div class="tw" style="margin-top:12px"><table id="dtab"></table></div></section>
 
@@ -118,15 +120,22 @@ const esc = s => String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&g
 const PROF = {easy:"Амархан асдаг", sens:"Мэдрэмтгий", calm:"Тайван гал", cond:"Нөхцөл шаарддаг"};
 /* [түлхүүр, нэр, эх сурвалж (event), яг юу хэмждэг] — funnel2 нь хуучин event нэртэй нэгтгэгдсэн (asaagch_stats) */
 const STEPS = [
-  ["landing","Нүүр хуудас","landing_view","Нүүр хуудас ачаалагдсан (?r= тайлангийн холбоос, төлбөр сэргээлт тооцохгүй)."],
-  ["consent_view","18+ дэлгэц харсан","consent_viewed ∪ quiz_start_click","Нүүрний 1-р асуултад хариулсан эсвэл «Үнэгүй тестээ эхлэх» дарж 18+ дэлгэц рүү орсон. 10/07-оос өмнө: «Эхлэх» товч."],
-  ["consent_ok","18+ баталгаажуулсан","quiz_start (= consent_completed)","18+ checkbox сонгоод асуулт руу орох товч дарсан."],
-  ["started","Тест эхэлсэн","quiz_started ∪ quiz_start","Асуултын дэлгэц анх нээгдсэн. 10/07-оос өмнө quiz_start-тай ижил мөч."],
-  ["completed","Тест дууссан","quiz_complete (= quiz_completed)","24 дэх асуултад хариулсан (оролдлого бүрд нэг удаа)."],
-  ["offer_seen","Төлбөртэй санал харагдсан","paid_offer_viewed","Саналын гарчиг дэлгэц дээр бүтнээрээ 1 секунд харагдсан. 2026-10-07-оос хэмжинэ. Доод самбараас шууд «төлөх» дарж болох тул дараагийн шат үүнээс их байж болно."],
-  ["pay_click","Төлбөрийн товч дарсан","pay_click (= paid_cta_clicked)","«Дэлгэрэнгүй тайлангаа нээх — 8,900₮» эсвэл «Төлбөрөө үргэлжлүүлэх» товч дарсан."],
-  ["$invoices","Нэхэмжлэл үүссэн (сервер)","invoices хүснэгт","Серверт QPay нэхэмжлэл амжилттай үүссэн тоо."],
-  ["$paid","Төлбөр баталгаажсан (сервер)","invoices.paid","QPay payment/check-ээр сервер баталгаажуулсан төлбөр. Орлогын үндсэн тоо."]
+  ["landing","Сайт үзсэн","landing_view","Нүүр хуудас ачаалагдсан (тайлангийн холбоос, төлбөр сэргээлт тооцохгүй). Нэгж: айлчлал (хөтчийн нэг таб дахь сесс), байнгын браузерийн ID биш."],
+  ["consent_view","18+ дэлгэц харсан","consent_viewed ∪ quiz_start_click","Нүүрний 1-р асуултад хариулсан эсвэл «Үнэгүй тестээ эхлэх» дарж 18+ дэлгэц рүү орсон."],
+  ["consent_ok","18+ баталгаажуулсан","quiz_start (= consent_completed)","18+ checkbox сонгоод асуулт руу орсон."],
+  ["started","Тест эхлүүлсэн","quiz_started ∪ quiz_start","Асуултын дэлгэц анх нээгдсэн."],
+  ["completed","Тест дуусгасан","quiz_complete","24 дэх асуултад хариулсан (оролдлого бүрд нэг удаа)."],
+  ["result","Үнэгүй үр дүн харсан","paywall_view (= result_viewed)","Үр дүнгийн дэлгэц гарсан. Түүхэн нэр нь paywall_view боловч санал харагдсан гэсэн үг БИШ."],
+  ["offer_seen","Төлбөртэй санал харагдсан","paid_offer_viewed","Саналын карт идэвхтэй таб дээр, доод самбарын ард биш хэсгээрээ 50%-иас дээш (урт бол дэлгэцийн 50%) 1 секунд харагдсан. 2026-10-07-оос."],
+  ["paybar_seen","Доод тогтмол CTA харагдсан","paybar_viewed","Доод «8,900₮» товч идэвхтэй таб дээр 1 секунд харагдсан. Саналын агуулга харагдсанаас тусдаа.","side"],
+  ["sample","Тайлангийн жишээ нээсэн","sample_opened","«Тайлангийн жишээ үзэх» дарсан (төлбөргүй).","side"],
+  ["pay_click","Төлбөрийн CTA дарсан","pay_click (= paid_cta_clicked)","«Дэлгэрэнгүй тайлангаа нээх — 8,900₮» эсвэл «Төлбөрөө үргэлжлүүлэх» дарсан."],
+  ["modal_open","Төлбөрийн цонх нээгдсэн","payment_modal_opened","QPay цонх хэрэглэгчийн үйлдлээр нээгдсэн (автомат сэргээлт тооцохгүй)."],
+  ["$invoices","Нэхэмжлэл үүссэн (сервер)","invoices хүснэгт","Серверт QPay нэхэмжлэл амжилттай үүссэн тоо (туршилтын нэхэмжлэл хасагдсан)."],
+  ["pay_failed","Төлбөрийн алдаа гарсан","payment_failed","Нэхэмжлэл үүсгэх (n=1), шалгах (n=2), тайлан ачаалах (n=3) алдаа гарсан айлчлал.","side"],
+  ["$paid","Сервер төлбөр баталгаажуулсан","invoices.paid","QPay payment/check-ээр сервер дүн, нэхэмжлэлийг шалгаж баталгаажуулсан. Борлуулалтын үндсэн тоо."],
+  ["unlocked","Эрх нээгдсэн","report_unlocked","Сервер тайлангийн хувийн холбоос (токен) олгосон."],
+  ["report_view","Тайлан амжилттай харагдсан","report_view","Төлбөртэй тайлан дэлгэцэнд гарсан."]
 ];
 
 async function load(){
@@ -156,9 +165,10 @@ function render(d){
   const sv = k => k==="$invoices" ? (P.invoices||0) : k==="$paid" ? (P.paid||0) : (F2[k]||0);
   const top = Math.max(1, ...STEPS.map(([k])=>sv(k)));
   let prev = null, worst = null;
-  $("funnel").innerHTML = STEPS.map(([k,l])=>{
+  $("funnel").innerHTML = STEPS.map(([k,l,,,side])=>{
     const v = sv(k); const drop = prev ? 100 - pct(v,prev) : null;
     /* offer_seen шинээр хэмжигдэж эхэлсэн, мөн доод самбараар алгасах боломжтой тул «хамгийн их орхилт»-д тооцохгүй, дараагийн шатыг «дууссан»-тай жишнэ */
+    if (side){ return `<div class="frow" title="${l}: ${v}"><span class="muted">↳ ${l}</span><span class="bar"><i style="width:${v/top*100}%;opacity:.45"></i></span><span class="num">${fmt(v)}</span></div>`; }
     if (k!=="offer_seen" && prev && prev>=20 && drop!=null && drop>0 && (!worst || drop>worst.drop)) worst = {l, drop, from:prev, to:v};
     const ofLanding = F2.landing ? ` <span class="muted">${pf(pct(v,F2.landing))}</span>` : "";
     const html = `<div class="frow" title="${l}: ${v}"><span>${l}</span><span class="bar"><i style="width:${v/top*100}%"></i></span><span class="num">${fmt(v)}${ofLanding} ${drop!=null && prev && drop>0 ? `<span class="drop">−${drop.toFixed(0)}%</span>`:""}</span></div>`;
@@ -167,6 +177,7 @@ function render(d){
   const since = F2.offer_since ? new Date(F2.offer_since) : null, rs = F2.range_start ? new Date(F2.range_start) : null;
   $("fnote").textContent = (!since || (rs && since > rs)) ? `«Төлбөртэй санал харагдсан» шат ${since ? since.toLocaleString("mn-MN")+"-аас" : "одоохондоо"} эхэлж хэмжигдсэн тул энэ хугацааны өмнөх хэсэгт 0 байна — тэр шатны орхилтыг хэт дүгнэхгүй.` : "";
   $("fnote").textContent += ` Сесстэй холбогдсон (клиент) тоо: нэхэмжлэл ${fmt(F2.invoice_client)}, төлбөр ${fmt(F2.paid_client)}, банкны апп нээсэн ${fmt(F2.bank_open)}, төлбөрийн алдаа ${fmt(F2.pay_failed)}. Серверийн тоо туршилтын болон хэмжилт эхлэхээс өмнөх нэхэмжлэлийг багтаадаг тул өмнөх шатаас их байж болно.`;
+  table("vertab", ["Хувилбар","Эхэлсэн","Зочин","Дуусгасан","Санал харсан","Төлбөр дарсан","Төлсөн (клиент)"], (d.versions||[]).map(v=>[esc(v.ver), v.since ? new Date(v.since).toLocaleDateString("mn-MN") : "–", fmt(v.visitors), fmt(v.completed), fmt(v.offer_seen), fmt(v.pay_click), fmt(v.paid)]));
   table("fdef", ["Шат","Event","Яг юу хэмждэг"], STEPS.map(([k,l,ev,def])=>[esc(l), `<code>${esc(ev)}</code>`, esc(def)]));
 
   /* өдрүүд */
