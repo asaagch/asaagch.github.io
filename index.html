@@ -215,8 +215,9 @@ ol.do{margin:0;padding-left:1.2rem;display:grid;gap:10px}
           <div class="row"><span class="frame">1 / 24 · Ерөнхийдөө</span><span class="small muted">Үнэгүй</span></div>
           <p class="q1text" id="hero-qtext"></p>
           <div class="opts" id="hero-opts"></div>
-          <div class="row"><span class="small muted" id="start-note">Хариултаа сонгоход тест эхэлнэ · 24 асуулт · ойролцоогоор 5 минут · товч үр дүн үнэгүй</span><button class="link small" data-hv="na">Хамаарахгүй</button></div>
+          <div class="row"><span class="small muted" id="start-note">Хариултаа сонгоход тест эхэлнэ · 24 асуулт · ойролцоогоор 5 минут</span><button class="link small" data-hv="na">Хамаарахгүй</button></div>
         </div>
+        <p class="small muted" id="price-note" style="margin-top:10px">Товч үр дүн үнэгүй. Дэлгэрэнгүй тайлан 8,900₮.</p>
       </div>
       <div class="gaugecard" aria-label="Жишээ үр дүн">
         <div class="eyebrow">Жишээ үр дүн</div>
@@ -377,6 +378,19 @@ ol.do{margin:0;padding-left:1.2rem;display:grid;gap:10px}
   </div>
 </section>
 
+<!-- ============ 4б. ТӨЛБӨР СЭРГЭЭХ (refresh / банкны аппаас буцах) ============ -->
+<section id="s-resume" class="screen" hidden>
+  <div class="narrow" style="display:grid;gap:20px">
+    <header class="top"><div class="logo">Асаа<span>гч</span></div><span class="pill">Төлбөр</span></header>
+    <div class="card fade">
+      <h2 id="rs-h" tabindex="-1">Таны төлбөрийн мэдээлэл хадгалагдсан байна</h2>
+      <p class="muted">Хуудас дахин ачаалагдсан тул өмнөх нэхэмжлэлийг сэргээлээ. Тестийн хариулт хадгалагдаагүй, зөвхөн тайланд хэрэгтэй товч хураангуй энэ хөтчийн цонхонд түр хадгалагдсан.</p>
+      <button class="btn block" id="rs-go">Төлбөрөө үргэлжлүүлэх — 8,900₮</button>
+      <button class="link small" id="rs-new">Тестийг шинээр эхлэх</button>
+    </div>
+  </div>
+</section>
+
 <!-- ============ 5. QPAY ============ -->
 <div class="modal" id="m-pay" hidden>
   <div class="sheet fade" role="dialog" aria-modal="true" aria-labelledby="pay-h" aria-describedby="pay-d">
@@ -394,7 +408,7 @@ ol.do{margin:0;padding-left:1.2rem;display:grid;gap:10px}
     <button class="btn ghost block" id="b-check">Төлбөр шалгах</button>
     <details class="small" style="padding-block:4px;border:0">
       <summary>Баталгаажуулалт удааширвал яах вэ?</summary>
-      <p>Банкны аппад гүйлгээ амжилттай гэж гарсан бол 30 секунд хүлээгээд «Төлбөр шалгах» товчийг дарна уу. Энэ хуудсыг шинэчлэхгүй байна уу. Цонхоо хаасан ч доорх төлбөрийн товчийг дахин дарахад ижил нэхэмжлэлээр үргэлжилнэ. Дахин төлбөр төлөх шаардлагагүй.</p>
+      <p>Банкны аппад гүйлгээ амжилттай гэж гарсан бол 30 секунд хүлээгээд «Төлбөр шалгах» товчийг дарна уу. Цонхоо хаасан, хуудас шинэчлэгдсэн эсвэл банкны аппаас буцаж ирсэн ч энэ хөтчийн цонхонд ижил нэхэмжлэл сэргээгдэнэ. Дахин төлбөр төлөх шаардлагагүй.</p>
     </details>
     <p class="small muted" style="text-align:center">Нэг удаагийн төлбөр. Захиалга биш. Дахин төлбөр татахгүй.</p>
     <div class="demo-note" id="p-demo">Демо горим: бодит төлбөр авахгүй. <button class="link" id="b-demopaid" style="color:inherit">Төлбөр орсон гэж үзэх</button></div>
@@ -488,7 +502,7 @@ const PROFILES = Object.fromEntries(PROFILE_KEYS.map(k=>[k,{ get n(){ return T(`
 const HINT = { acc: new Proxy({}, {get:(_,k)=>T("hint.acc."+String(k))}), brk: new Proxy({}, {get:(_,k)=>T("hint.brk."+String(k))}) };
 
 /* ================== ТӨЛӨВ ================== */
-const S = {answers: Array(Q.length).fill(null), idx:0, paid:false, variant:null, invoice:null, shownInter:{}};
+const S = {answers: Array(Q.length).fill(null), idx:0, paid:false, variant:null, invoice:null, shownInter:{}, attempt:0};
 const store = { get(k){ try{return localStorage.getItem(k)}catch(e){return null} }, set(k,v){ try{localStorage.setItem(k,v)}catch(e){} } };
 S.variant = store.get("ab_variant");
 if (!S.variant) { S.variant = Math.random() < .5 ? "sharp" : "curious"; store.set("ab_variant",S.variant); }
@@ -525,10 +539,10 @@ const LOG = [];
 /* Шинэ үйл явдлын нэр → хуучин DB нэр. Хяналтын самбар (asaagch_stats) хуучин нэрээр тоолдог тул
  * DB-д хуучин нэрээр нь, GA/Pixel-д шинэ нэрээр илгээнэ. Нэг үйлдэл = нэг мөр. */
 const DB_NAME = { landing_cta_clicked:"quiz_start_click", consent_completed:"quiz_start", quiz_progress_8:"q8_reached",
-  quiz_progress_16:"q16_reached", quiz_completed:"quiz_complete", paid_offer_viewed:"paywall_view",
+  quiz_progress_16:"q16_reached", quiz_completed:"quiz_complete",
   paid_cta_clicked:"pay_click", purchase_completed:"paid" };
-const ONCE = new Set(); // нэг сесст нэг удаа л илгээх үйл явдлууд
-function trackOnce(ev, data){ if (ONCE.has(ev)) return; ONCE.add(ev); track(ev, data); }
+const ONCE = new Set(); // түлхүүр тус бүрд нэг удаа (жишээ нь тестийн оролдлого бүрд)
+function trackOnce(ev, data, key){ key = key || ev; if (ONCE.has(key)) return; ONCE.add(key); track(ev, data); }
 function track(ev, data={}){
   sendMetrics({ev: DB_NAME[ev] || ev, sid:SESS.sid, variant:S.variant, q:data.q, kind:data.kind, n:data.n, src:SESS.src, med:SESS.med, camp:SESS.camp, ref_host:SESS.ref, device:SESS.device});
   if (ev==="q_view" || ev==="q_answer") return; // асуулт бүрийн үйл явдлыг GA/Pixel рүү илгээхгүй
@@ -588,7 +602,7 @@ function buildSummary(){
 }
 
 /* ================== ДЭЛГЭЦ ================== */
-const SCREENS = ["landing","gate","quiz","result","report"];
+const SCREENS = ["landing","gate","quiz","result","resume","report"];
 function go(name){
   SCREENS.forEach(s => document.getElementById("s-"+s).hidden = (s!==name));
   window.scrollTo(0,0);
@@ -625,7 +639,7 @@ const cAge=document.getElementById("c-age"), bGate=document.getElementById("b-ga
 function gateOk(){ bGate.disabled = !cAge.checked; gHelp.hidden = cAge.checked; }
 function gatePrep(){ const has = S.answers[0]!=null; document.getElementById("gate-saved").hidden = !has; bGate.textContent = has ? "2-р асуулт руу орох" : "1-р асуулт руу орох"; }
 cAge.addEventListener("change",gateOk);
-bGate.addEventListener("click",()=>{ if (bGate.disabled) return; track("consent_completed"); S.idx = S.answers[0]!=null ? 1 : 0; S.started=false; go("quiz"); });
+bGate.addEventListener("click",()=>{ if (bGate.disabled) return; track("consent_completed"); S.attempt++; S.completed=false; S.idx = S.answers[0]!=null ? 1 : 0; S.started=false; go("quiz"); });
 
 /* ---------- тест ---------- */
 function renderQ(){
@@ -705,7 +719,23 @@ function renderResult(){
   document.getElementById("r-locked").innerHTML = top + items.map(it=>
     `<div class="lock"><span class="ic" aria-hidden="true">🔒</span>${it.blur?`<span class="blur" role="img" aria-label="Түгжээтэй нөхцөл"><span aria-hidden="true">${esc(it.blur)}</span></span>`:`<span>${it.txt}</span>`}</div>`).join("");
   updateResume();
-  trackOnce("paid_offer_viewed",{n});
+  trackOnce("paywall_view",{n},"pw"+S.attempt); // хуучин утга: үр дүн гарсан (түүхэн өгөгдөлтэй тасралтгүй)
+  watchOffer(n);
+}
+/* paid_offer_viewed: төлбөртэй саналын гарчиг дэлгэц дээр бүтнээрээ (доод төлбөрийн самбарын ард биш) 1 секунд харагдсан үед,
+ * тестийн оролдлого бүрд нэг удаа. */
+let offerIO = null, offerT = null;
+function watchOffer(n){
+  const key = "pov"+S.attempt; if (ONCE.has(key)) return;
+  const el = document.getElementById("offer-h");
+  if (!("IntersectionObserver" in window)) return trackOnce("paid_offer_viewed",{n},key);
+  if (offerIO) offerIO.disconnect(); clearTimeout(offerT);
+  offerIO = new IntersectionObserver(es=>{
+    const e = es[es.length-1]; clearTimeout(offerT);
+    if (e.isIntersecting && e.intersectionRatio >= 0.99 && !document.getElementById("s-result").hidden)
+      offerT = setTimeout(()=>{ trackOnce("paid_offer_viewed",{n},key); offerIO.disconnect(); }, 1000);
+  }, {threshold:[0, 0.5, 1], rootMargin:"0px 0px -130px 0px"});
+  offerIO.observe(el);
 }
 const OFFER_ITEMS = [
   "Сэрлийг хамгийн хүчтэй саатуулж буй нөхцөлүүдийн эрэмбэ",
@@ -730,28 +760,47 @@ document.getElementById("b-share").addEventListener("click",async()=>{
 });
 
 /* ---------- QPay ----------
- * Төлөвүүд: loading (нэхэмжлэл үүсгэж байна) → pending (хүлээж байна) → paid (тайлан нээгдэнэ)
- *           error (дараагийн алхмыг хэлнэ) · expired (хүлээх хугацаа дууссан). QPay/сервер логик өөрчлөгдөөгүй. */
+ * Төлөвүүд: loading → pending → paid · error/checkfail/invfail/repfail (дараагийн алхмыг хэлнэ)
+ *           expired (10 мин хүлээлт дууссан) · stale (20 мин-ээс хуучин нэхэмжлэл, серверээр шалгаад төлөгдөөгүй).
+ * Сэргээлт: нэхэмжлэл, нэг удаагийн нууц (claim) ба тайлангийн товч хураангуйг (24 хариулт БИШ) sessionStorage-д хадгална —
+ * хөтчийн таб хаагдахад устна. Тайлангийн холбоос (report_token) localStorage-д хадгалагддагаас илүү мэдээлэл агуулахгүй.
+ * Сүлжээний алдааг хэзээ ч «төлөөгүй» гэж үзэхгүй; шинэ нэхэмжлэл зөвхөн хэрэглэгчийн товчоор үүснэ. */
 const BANKS = ["Хаан банк","Голомт","ХХБ","Төрийн банк","Хас банк","Капитрон","М банк","SocialPay","Монпэй"];
-const INV_TTL = 20*60*1000; // нэг нэхэмжлэлийг дахин ашиглах хугацаа (өмнөхтэй ижил)
+const INV_TTL = 20*60*1000;
+const PAYKEY = "asaagch_pay";
+const payStore = {
+  get(){ try{ const v = JSON.parse(sessionStorage.getItem(PAYKEY)||"null"); return v && v.invoice_id && v.claim ? v : null; }catch(e){ return null; } },
+  set(v){ try{ sessionStorage.setItem(PAYKEY, JSON.stringify(v)); }catch(e){} },
+  del(){ try{ sessionStorage.removeItem(PAYKEY); }catch(e){} }
+};
+S.invoice = payStore.get();
+const saveInv = ()=>{ if (S.invoice) payStore.set(S.invoice); };
+const fresh = inv => !!inv && Date.now()-inv.at < INV_TTL;
 const mPay = document.getElementById("m-pay"), bCheck = document.getElementById("b-check");
-let pollT=null, pollStart=0, lastManual=0, payState="idle", lastFocus=null;
+let pollT=null, pollStart=0, lastManual=0, payState="idle", lastFocus=null, paying=false;
 document.getElementById("b-pay").addEventListener("click", ()=>{ track("paid_cta_clicked"); openPay(); });
+document.getElementById("rs-go").addEventListener("click", ()=>{ track("paid_cta_clicked"); openPay(); });
+document.getElementById("rs-new").addEventListener("click", ()=>{ payStore.del(); S.invoice=null; S.paid=false; renderHeroQ(); go("landing"); track("landing_view"); });
 document.getElementById("b-payclose").addEventListener("click", closePay);
-bCheck.addEventListener("click", ()=>{ if (payState==="invfail") openPay(true); else checkPay(true); });
+bCheck.addEventListener("click", ()=>{
+  if (payState==="invfail" || payState==="stale") return newInvoice();
+  if (payState==="repfail") return onPaid();
+  if (payState==="checkfail") return openPay(true);
+  checkPay(true);
+});
 document.getElementById("b-demopaid").addEventListener("click", ()=>onPaid());
 const IS_MOB = SESS.device==="mobile";
-const qrBox = document.getElementById("p-qrbox"), bShowQr = document.getElementById("b-showqr");
+const qrBox = document.getElementById("p-qrbox"), bShowQr = document.getElementById("b-showqr"), banksH = document.getElementById("p-banks-h");
 bShowQr.addEventListener("click", ()=>{ const open = qrBox.hidden; qrBox.hidden = !open; bShowQr.setAttribute("aria-expanded", String(open)); bShowQr.textContent = open ? "QR кодыг нуух" : "Өөр төхөөрөмжөөр уншуулах QR код харуулах"; });
 document.getElementById("p-banks").addEventListener("click", e=>{ if (e.target.closest("a.bank")) track("bank_app_opened"); });
-/* банкны аппаас буцаж ирэхэд төлбөрийг шууд шалгана */
-document.addEventListener("visibilitychange", ()=>{ if (document.visibilityState==="visible" && !mPay.hidden && S.invoice && !S.paid) setTimeout(()=>checkPay(true), 600); });
+/* банкны аппаас буцаж ирэхэд (хуудас дахин ачаалагдаагүй бол) төлбөрийг шууд шалгана */
+document.addEventListener("visibilitychange", ()=>{ if (document.visibilityState==="visible" && !mPay.hidden && S.invoice && !S.paid && payState==="pending") setTimeout(()=>checkPay(true), 600); });
 /* утсан дээр: банкны апп эхэнд, QR нугалагдсан; компьютер дээр QR эхэнд */
 function layoutPay(hasLinks){
   const mob = IS_MOB && hasLinks;
   qrBox.hidden = mob; bShowQr.hidden = !mob; bShowQr.setAttribute("aria-expanded","false");
   bShowQr.textContent = "Өөр төхөөрөмжөөр уншуулах QR код харуулах";
-  document.getElementById("p-banks-h").textContent = mob ? "Банкны аппаа сонгоно уу" : "Эсвэл утсан дээрээ банкны аппаа сонгоно уу";
+  banksH.textContent = mob ? "Банкны аппаа сонгоно уу" : "Эсвэл утсан дээрээ банкны аппаа сонгоно уу";
   document.getElementById("pay-d").textContent = mob
     ? "Банкны аппаа сонгоод төлбөрөө баталгаажуулна уу. Энэ хуудас руу буцаж ирэхэд тайлан автоматаар нээгдэнэ."
     : "QR код уншуулах эсвэл банкны аппыг сонгоно уу. QPay төлбөрийг баталгаажуулмагц энэ дэлгэц дээр тайлан автоматаар нээгдэнэ.";
@@ -767,34 +816,64 @@ mPay.addEventListener("keydown", e=>{
   else if (!e.shiftKey && document.activeElement===last){ e.preventDefault(); first.focus(); }
 });
 function setInert(on){ SCREENS.forEach(x=>{ const el=document.getElementById("s-"+x); if (on) el.setAttribute("inert",""); else el.removeAttribute("inert"); }); }
-
-async function openPay(retry){
-  if (mPay.hidden){ lastFocus = document.activeElement; mPay.hidden = false; setInert(true); document.getElementById("pay-h").focus(); track("payment_modal_opened"); }
+function showModal(auto){
+  if (mPay.hidden){ lastFocus = document.activeElement; mPay.hidden = false; setInert(true); document.getElementById("pay-h").focus(); if (!auto) track("payment_modal_opened"); }
   document.getElementById("p-demo").hidden = CONFIG.mode!=="demo";
-  if (!retry && S.invoice && Date.now()-S.invoice.at < INV_TTL){ startPolling(); checkPay(false); return; } // нэг нэхэмжлэлийг дахин ашиглана
-  /* хуучирсан нэхэмжлэлээр төлсөн байж магадгүй тул шинийг үүсгэхээс өмнө нэг шалгана */
-  if (!retry && S.invoice && CONFIG.mode!=="demo"){
-    setState("loading","Өмнөх нэхэмжлэлийг шалгаж байна…");
-    try{ const r = await fetch(`${CONFIG.apiBase}/qpay/check/${encodeURIComponent(S.invoice.invoice_id)}?verify=1`); const d = await r.json(); if (d.paid) return onPaid(); }catch(e){}
-  }
-  S.invoice = null;
-  setState("loading","Нэхэмжлэл үүсгэж байна…");
+}
+function clearInvoiceView(){
   document.getElementById("p-no").textContent = "…";
-  document.getElementById("p-qr").innerHTML = ""; document.getElementById("p-banks").innerHTML = ""; layoutPay(false); qrBox.hidden = IS_MOB;
+  document.getElementById("p-qr").innerHTML = ""; document.getElementById("p-banks").innerHTML = "";
+  qrBox.hidden = true; bShowQr.hidden = true; banksH.hidden = true;
+}
+function drawInvoice(inv){
+  banksH.hidden = false;
+  document.getElementById("p-no").textContent = inv.ref;
+  const qr = document.getElementById("p-qr"); qr.innerHTML = "";
+  const qrFail = ()=>{ qr.innerHTML = '<p class="small" style="color:#1B1219;text-align:center;padding:8px;margin:0">QR код ачаалагдсангүй. Банкны аппаа сонгож төлнө үү.</p>'; };
+  const libQR = ()=>{ if (window.QRCode && inv.qr_text){ try{ new QRCode(qr,{text:inv.qr_text,width:192,height:192,colorDark:"#1B1219",colorLight:"#ffffff"}); return true; }catch(e){} } return false; };
+  if (inv.qr_image){ const img = new Image(); img.alt = "QPay QR код"; img.onerror = ()=>{ img.remove(); if (!libQR()) qrFail(); }; img.src = "data:image/png;base64,"+inv.qr_image; qr.appendChild(img); }
+  else if (!libQR()) qrFail();
+  const urls = inv.urls && inv.urls.length ? inv.urls : BANKS.map(n=>({name:n, link:null}));
+  const safeLogo = l => typeof l==="string" && /^https:\/\//.test(l) ? l : "";
+  document.getElementById("p-banks").innerHTML = urls.map(u=> u.link
+    ? `<a class="bank" href="${esc(u.link)}" rel="noopener" style="color:inherit;text-decoration:none">${safeLogo(u.logo)?`<img src="${esc(u.logo)}" alt="" loading="lazy" onerror="this.remove()">`:""}<span>${esc(u.description||u.name)}</span></a>`
+    : `<span class="bank">${esc(u.name)}</span>`).join("");
+  layoutPay(urls.some(u=>u.link));
+}
+/* Серверээс нэг удаа: true / false / "missing" (серверт байхгүй) / null (сүлжээ, серверийн алдаа — төлөөгүй гэж ҮЗЭХГҮЙ) */
+async function serverPaid(verify){
+  if (CONFIG.mode==="demo") return false;
   try{
-    const inv = await createInvoice(); inv.at = Date.now(); S.invoice = inv;
-    document.getElementById("p-no").textContent = inv.ref;
-    const qr = document.getElementById("p-qr");
-    if (inv.qr_image){ const img=new Image(); img.alt="QPay QR код"; img.src="data:image/png;base64,"+inv.qr_image; qr.appendChild(img); }
-    else if (window.QRCode){ new QRCode(qr,{text:inv.qr_text,width:192,height:192,colorDark:"#1B1219",colorLight:"#ffffff"}); }
-    const urls = inv.urls && inv.urls.length ? inv.urls : BANKS.map(n=>({name:n, link:null}));
-    const safeLogo = l => typeof l==="string" && /^https:\/\//.test(l) ? l : "";
-    document.getElementById("p-banks").innerHTML = urls.map(u=> u.link
-      ? `<a class="bank" href="${esc(u.link)}" rel="noopener" style="color:inherit;text-decoration:none">${safeLogo(u.logo)?`<img src="${esc(u.logo)}" alt="" loading="lazy" onerror="this.remove()">`:""}<span>${esc(u.description||u.name)}</span></a>`
-      : `<span class="bank">${esc(u.name)}</span>`).join("");
-    layoutPay(urls.some(u=>u.link));
-    track("invoice_created");
-    startPolling();
+    const r = await fetch(`${CONFIG.apiBase}/qpay/check/${encodeURIComponent(S.invoice.invoice_id)}${verify?"?verify=1":""}`);
+    if (r.status===404) return "missing";
+    if (!r.ok) return null;
+    const d = await r.json(); return d.paid === true;
+  }catch(e){ return null; }
+}
+async function openPay(auto){
+  showModal(auto===true);
+  if (!S.invoice) return newInvoice();
+  if (S.invoice.purchased) return onPaid(); // төлөгдсөн нь баталгаажсан → тайланг сэргээнэ
+  if (fresh(S.invoice)){ drawInvoice(S.invoice); startPolling(); checkPay(auto===true); return; } // сэргээх үед QPay-ээс шууд нэг шалгана
+  /* хуучирсан нэхэмжлэл: шинийг санал болгохоос өмнө серверээс эцсийн удаа шалгана */
+  clearInvoiceView(); document.getElementById("p-no").textContent = S.invoice.ref;
+  setState("loading","Өмнөх нэхэмжлэлийн төлбөрийг шалгаж байна…");
+  const p = await serverPaid(true);
+  if (p===true) return onPaid();
+  if (p===null){ track("payment_failed",{n:2}); return setState("checkfail","Төлбөрийн мэдээллийг шалгаж чадсангүй. Сүлжээгээ шалгаад «Дахин шалгах» товчийг дарна уу."); }
+  setState("stale","Өмнөх нэхэмжлэлийн хугацаа дууссан бөгөөд төлбөр бүртгэгдээгүй байна. Төлөх бол «Шинэ нэхэмжлэл үүсгэх» товчийг дарна уу.");
+}
+async function newInvoice(){
+  showModal(true);
+  const full = S.answers.filter(x=>x!=null).length >= 12;
+  const summary = full ? buildSummary() : (S.invoice && S.invoice.sum) || S.lastSum;
+  if (!summary) return setState("error","Тестийн үр дүн энэ хуудсанд алга байна. «Тестийг шинээр эхлэх» товчоор дахин бөглөнө үү.");
+  S.lastSum = summary; S.invoice = null; payStore.del();
+  clearInvoiceView();
+  setState("loading","Нэхэмжлэл үүсгэж байна…");
+  try{
+    const inv = await createInvoice(); inv.at = Date.now(); inv.sum = summary; inv.purchased = false; S.invoice = inv; saveInv();
+    drawInvoice(inv); track("invoice_created"); startPolling();
   }catch(e){ track("payment_failed",{n:1}); setState("invfail","Нэхэмжлэл үүсгэж чадсангүй. Сүлжээгээ шалгаад «Дахин оролдох» товчийг дарна уу."); }
 }
 function startPolling(){
@@ -805,28 +884,33 @@ function closePay(){
   if (mPay.hidden) return;
   mPay.hidden = true; setInert(false); clearInterval(pollT); track("pay_close");
   updateResume();
-  const b = document.getElementById("b-pay");
+  const b = document.getElementById(document.getElementById("s-resume").hidden ? "b-pay" : "rs-go");
   (lastFocus && document.contains(lastFocus) && !lastFocus.closest("[hidden]") ? lastFocus : b).focus();
 }
+const BTN = {invfail:"Дахин оролдох", stale:"Шинэ нэхэмжлэл үүсгэх", repfail:"Тайланг дахин ачаалах", checkfail:"Дахин шалгах"};
 function setState(kind, text){
   payState = kind;
   const spin = kind==="loading" || kind==="pending";
   document.getElementById("p-status").innerHTML = (spin?'<span class="spin" aria-hidden="true"></span>':"") + `<span>${text}</span>`;
-  document.getElementById("p-status").style.color = (kind==="error"||kind==="invfail"||kind==="expired") ? "var(--warn)" : kind==="paid" ? "var(--ok)" : "";
-  bCheck.textContent = kind==="invfail" ? "Дахин оролдох" : "Төлбөр шалгах";
+  document.getElementById("p-status").style.color = ["error","invfail","expired","checkfail","repfail"].includes(kind) ? "var(--warn)" : kind==="paid" ? "var(--ok)" : "";
+  bCheck.textContent = BTN[kind] || "Төлбөр шалгах";
   bCheck.disabled = kind==="loading" || kind==="paid";
 }
+async function sha256hex(t){ const b = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(t)); return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,"0")).join(""); }
 async function createInvoice(){
   const ref = "AS" + Date.now().toString(36).toUpperCase() + Math.random().toString(36).slice(2,6).toUpperCase();
-  if (CONFIG.mode==="demo") return {ref, invoice_id:"demo-"+ref, qr_text:"DEMO-QPAY-"+ref, urls:[]};
-  const r = await fetch(CONFIG.apiBase+"/qpay/invoice",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({ref})});
+  /* claim: энэ хөтчид л байх нэг удаагийн нууц. Сервер зөвхөн хэшийг нь хадгална; тайлан авахад нууцыг шаардана. */
+  const claim = [...crypto.getRandomValues(new Uint8Array(32))].map(x=>x.toString(16).padStart(2,"0")).join("");
+  if (CONFIG.mode==="demo") return {ref, claim, invoice_id:"demo-"+ref, qr_text:"DEMO-QPAY-"+ref, urls:[]};
+  const r = await fetch(CONFIG.apiBase+"/qpay/invoice",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({ref, claim_hash: await sha256hex(claim)})});
   if (!r.ok) throw new Error("invoice");
-  return {ref, ...(await r.json())};
+  const d = await r.json();
+  return {ref, claim, invoice_id:d.invoice_id, qr_text:d.qr_text, qr_image:d.qr_image, urls:d.urls||[]};
 }
 /* Хуудас манай серверээс төлөвийг асууна (сервер QPay-ээс давтан асуудаггүй).
  * «Төлбөр шалгах» товч дарахад сервер QPay-ээс нэг удаа шалгана. */
-async function checkPay(manual, quiet){
-  if (!S.invoice || S.paid) return;
+async function checkPay(manual){
+  if (!S.invoice || S.paid || paying) return;
   if (!manual && Date.now()-pollStart > CONFIG.pollMaxMs){
     clearInterval(pollT);
     setState("expired","10 минутын дотор төлбөр бүртгэгдсэнгүй. Төлсөн бол «Төлбөр шалгах» товчийг дарна уу. Төлөөгүй бол цонхоо хаагаад дахин нээнэ үү.");
@@ -834,33 +918,36 @@ async function checkPay(manual, quiet){
   }
   if (CONFIG.mode==="demo"){ if (manual) setState("pending","Төлбөр одоогоор бүртгэгдээгүй байна. Банкны аппад гүйлгээ амжилттай болсон бол 30 секунд хүлээгээд дахин шалгана уу."); return; }
   if (manual){ if (Date.now()-lastManual < 5000) return; lastManual = Date.now(); setState("pending","Шалгаж байна…"); }
-  try{
-    const r = await fetch(`${CONFIG.apiBase}/qpay/check/${encodeURIComponent(S.invoice.invoice_id)}${manual?"?verify=1":""}`);
-    if (!r.ok) throw new Error("check");
-    const d = await r.json();
-    if (d.paid) onPaid();
-    else if (manual) setState("pending","Төлбөр одоогоор бүртгэгдээгүй байна. Банкны аппад гүйлгээ амжилттай болсон бол 30 секунд хүлээгээд дахин шалгана уу.");
-  }catch(e){
-    if (manual){ track("payment_failed",{n:2}); setState("error","Төлбөрийн мэдээллийг шалгаж чадсангүй. Сүлжээгээ шалгаад «Төлбөр шалгах» товчийг дахин дарна уу."); }
-  }
+  const p = await serverPaid(manual);
+  if (p===true) return onPaid();
+  if (!manual) return;
+  if (p===null){ track("payment_failed",{n:2}); setState("error","Төлбөрийн мэдээллийг шалгаж чадсангүй. Сүлжээгээ шалгаад «Төлбөр шалгах» товчийг дахин дарна уу."); }
+  else setState("pending","Төлбөр одоогоор бүртгэгдээгүй байна. Банкны аппад гүйлгээ амжилттай болсон бол 30 секунд хүлээгээд дахин шалгана уу.");
 }
 async function onPaid(){
-  if (S.paid) return;
-  clearInterval(pollT); S.paid = true;
-  if (!S.purchased){ S.purchased = true; track("purchase_completed",{ref:S.invoice&&S.invoice.ref}); } // зөвхөн сервер баталгаажуулсны дараа, нэг удаа
+  if (S.paid || paying || !S.invoice) return;
+  paying = true; clearInterval(pollT);
+  if (!S.invoice.purchased){ S.invoice.purchased = true; saveInv(); track("purchase_completed",{ref:S.invoice.ref}); } // сервер баталгаажуулсны дараа, нэхэмжлэл бүрд нэг удаа (reload-д ч давхардахгүй)
   setState("paid","Төлбөр баталгаажлаа. Тайлан нээгдэж байна…");
   try{
-    const summary = buildSummary();
     let data;
     if (CONFIG.mode==="demo"){
-      const r = await fetch("report-content.json"); data = {content: await r.json(), summary, token:null};
+      const r = await fetch("report-content.json"); data = {content: await r.json(), summary: S.invoice.sum, token:null};
+    } else if (S.invoice.token){
+      const r = await fetch(`${CONFIG.apiBase}/report/${encodeURIComponent(S.invoice.token)}`);
+      if (!r.ok) throw new Error("report"); data = {...(await r.json()), token: S.invoice.token};
     } else {
-      const r = await fetch(CONFIG.apiBase+"/report",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({invoice_id:S.invoice.invoice_id, summary})});
+      const r = await fetch(CONFIG.apiBase+"/report",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({invoice_id:S.invoice.invoice_id, claim:S.invoice.claim, summary:S.invoice.sum})});
       if (!r.ok) throw new Error("report"); data = await r.json();
     }
-    if (data.token) store.set("report_token", data.token);
+    if (data.token){ store.set("report_token", data.token); S.invoice.token = data.token; saveInv(); }
+    S.paid = true; paying = false;
     mPay.hidden = true; setInert(false); renderReport(data);
-  }catch(e){ S.paid=false; track("payment_failed",{n:3}); setState("error","Төлбөр баталгаажсан ч тайланг ачаалж чадсангүй. Сүлжээгээ шалгаад «Төлбөр шалгах» товчийг дахин дарна уу. Дахин төлөх шаардлагагүй."); }
+  }catch(e){
+    paying = false; track("payment_failed",{n:3});
+    showModal(true);
+    setState("repfail","Төлбөр баталгаажсан ч тайланг ачаалж чадсангүй. Сүлжээгээ шалгаад «Тайланг дахин ачаалах» товчийг дарна уу. Дахин төлөх шаардлагагүй.");
+  }
 }
 
 /* ---------- дэлгэрэнгүй тайлан ---------- */
@@ -909,16 +996,13 @@ function renderReport({content:C, summary:M, token}){
 }
 
 /* ---------- ?r=TOKEN холбоосоор тайлан нээх ---------- */
-(async function openFromLink(){
-  let token = null;
-  try{ token = new URLSearchParams(location.search).get("r"); }catch(e){}
-  if (!token || CONFIG.mode!=="live") return;
+async function openFromLink(token){
   try{
     const r = await fetch(`${CONFIG.apiBase}/report/${encodeURIComponent(token)}`);
     if (!r.ok) throw new Error();
     const d = await r.json(); S.paid = true; track("report_reopen"); renderReport({...d, token});
   }catch(e){ toast("Тайлангийн холбоос хүчингүй байна. Холбоосоо бүтнээр нь хуулж дахин нээнэ үү."); }
-})();
+}
 
 /* ---------- туслах ---------- */
 function toast(t){ const d=document.createElement("div"); d.className="toast"; d.textContent=t; document.body.appendChild(d); setTimeout(()=>d.remove(),2800); }
@@ -931,7 +1015,7 @@ const dPanel=document.getElementById("d-panel");
 document.getElementById("d-btn").addEventListener("click",()=>{ dPanel.hidden=!dPanel.hidden; });
 document.getElementById("d-v").textContent = S.variant;
 document.getElementById("d-fill").addEventListener("click",()=>{
-  S.answers = [3,2,2,3, 3,3,2,3, 3,3,2,1, 2,2,2,3, 3,2,3,2, 3,1,2,3]; S.shownInter={8:1,16:1}; track("demo_fill"); go("result");
+  S.answers = [3,2,2,3, 3,3,2,3, 3,3,2,1, 2,2,2,3, 3,2,3,2, 3,1,2,3]; S.shownInter={8:1,16:1}; S.attempt++; go("result");
 });
 document.getElementById("d-var").addEventListener("click",()=>{
   S.variant = S.variant==="sharp"?"curious":"sharp"; store.set("ab_variant",S.variant);
@@ -939,9 +1023,15 @@ document.getElementById("d-var").addEventListener("click",()=>{
   if (!document.getElementById("s-result").hidden) renderResult();
 });
 document.getElementById("d-reset").addEventListener("click",()=>{
-  S.answers=Array(Q.length).fill(null); S.idx=0; S.paid=false; S.invoice=null; S.shownInter={}; cAge.checked=false; gateOk(); renderHeroQ(); S.started=S.completed=S.purchased=false; ONCE.clear(); go("landing");
+  S.answers=Array(Q.length).fill(null); S.idx=0; S.paid=false; S.invoice=null; payStore.del(); S.shownInter={}; cAge.checked=false; gateOk(); renderHeroQ(); S.started=S.completed=S.purchased=false; ONCE.clear(); go("landing");
 });
 
-(function(){ let r=null; try{ r = new URLSearchParams(location.search).get("r"); }catch(e){} if (!r) track("landing_view"); })();
+/* эхлэл: ?r= холбоос → тайлан; хадгалагдсан нэхэмжлэл → төлбөр сэргээх; бусад → нүүр */
+(function boot(){
+  let r=null; try{ r = new URLSearchParams(location.search).get("r"); }catch(e){}
+  if (r && CONFIG.mode==="live") return openFromLink(r);
+  if (S.invoice){ go("resume"); document.getElementById("rs-new").hidden = !!S.invoice.purchased; openPay(true); return; }
+  track("landing_view");
+})();
 </script>
 </html>
