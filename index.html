@@ -54,7 +54,8 @@ button{font:inherit;color:inherit;cursor:pointer}
 .btn.block{width:100%}
 .btn[disabled]{opacity:.45;cursor:not-allowed}
 :focus-visible{outline:2px solid var(--ember);outline-offset:3px}
-.link{background:none;border:0;color:var(--muted);text-decoration:underline;text-underline-offset:3px;padding:.4rem}
+.link{background:none;border:0;color:var(--muted);text-decoration:underline;text-underline-offset:3px;padding:.4rem .6rem;min-height:44px;min-width:44px;display:inline-flex;align-items:center;justify-content:center}
+.help{font-size:.85rem;color:var(--warn);margin-top:-6px}
 
 /* top bar */
 .top{display:flex;justify-content:space-between;align-items:center;padding-block:18px}
@@ -133,9 +134,15 @@ footer{padding-block:40px 60px;border-top:1px solid var(--line);color:var(--mute
 .lock .blur{filter:blur(5px);user-select:none}
 .lock .ic{font-size:1rem;color:var(--muted);text-align:center}
 .paybar{position:fixed;left:0;right:0;bottom:0;padding:12px 18px calc(12px + env(safe-area-inset-bottom,0px));background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);border-top:1px solid var(--line);z-index:20}
-.paybar .narrow{display:flex;gap:12px;align-items:center}
-.paybar .meta{flex:1;min-width:0;font-size:.85rem;color:var(--muted);line-height:1.3}
-.paybar .meta b{display:block;color:var(--fg);font-size:1rem}
+.paybar .narrow{display:grid;gap:6px;justify-items:stretch}
+.paybar .btn{width:100%;padding:.9rem 1rem;font-size:1rem;line-height:1.25;text-align:center}
+.paybar .meta{font-size:.78rem;color:var(--muted);line-height:1.3;text-align:center}
+@media (max-width:400px){.paybar{padding-inline:12px}.paybar .btn{font-size:.95rem;padding:.85rem .5rem;letter-spacing:-.005em}.paybar .meta{font-size:.72rem}}
+#s-result{padding-bottom:150px}
+.offerbox{background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:24px;display:grid;gap:16px}
+.offerbox h2{font-size:clamp(1.6rem,6vw,2.1rem)}
+.terms{display:grid;gap:2px;font-size:.85rem;color:var(--muted)}
+.resume{border:1px solid var(--line);border-radius:var(--r);padding:12px 14px;font-size:.88rem;color:var(--muted)}
 .sharebox{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
 
 /* modal */
@@ -193,12 +200,12 @@ ol.do{margin:0;padding-left:1.2rem;display:grid;gap:10px}
 
     <div class="hero">
       <div>
-        <div class="eyebrow">24 асуулт · 5 минут</div>
+        <div class="eyebrow">Сэрлийн хэв маягийн тест</div>
         <h1 style="margin-top:14px">Таны сэрэл яагаад <em>унтардаг</em> вэ?</h1>
         <p class="lead">Хүн бүрт сэрэл төрүүлдэг зүйлс, сэрлийг унтраадаг зүйлс бий. Хариултаараа өөрийгөө юу асааж, юу унтрааж байгааг хараарай.</p>
         <div class="cta">
-          <button class="btn" id="b-start">Тестээ эхлэх</button>
-          <span class="small muted">Товч үр дүн үнэгүй. Дэлгэрэнгүй тайлан 8,900₮.</span>
+          <button class="btn" id="b-start" aria-describedby="start-note">Үнэгүй тестээ эхлэх</button>
+          <span class="small muted" id="start-note">24 асуулт · ойролцоогоор 5 минут · товч үр дүн үнэгүй</span>
         </div>
       </div>
       <div class="gaugecard" aria-label="Жишээ үр дүн">
@@ -253,21 +260,21 @@ ol.do{margin:0;padding-left:1.2rem;display:grid;gap:10px}
     <div class="section two">
       <div style="display:grid;gap:16px">
         <h2>Дэлгэрэнгүй тайланд юу байх вэ?</h2>
-        <p class="muted">Ерөнхий зөвлөгөө биш. Тайлан бүхэлдээ таны хариултаас бүтнэ. Хоёр хүний тайлан ижилхэн гарахгүй.</p>
-        <p class="small muted">Сэрэл ба түүнийг саатуулах хүчин зүйлсийн олон улсын судалгаанд ашигладаг хос загвар (Dual Control Model) дээр суурилсан.</p>
+        <p class="muted">Тайлангийн агуулга таны сонгосон хариултаас хамаарч өөрчлөгдөнө.</p>
+        <p class="small muted">Сэрлийг төрүүлэх ба саатуулах хүчин зүйлсийг тусад нь авч үздэг хос хяналтын загвараас (Dual Control Model) санаа авсан. Энэ тест клиник хэмжүүр биш.</p>
       </div>
       <div class="offer">
         <ul>
-          <li><span class="check">✓</span><span>Таны сэрлийг унтраадаг зүйлс, хүчтэйгээс нь эрэмбэлсэн</span></li>
+          <li><span class="check">✓</span><span>Сэрлийг хамгийн хүчтэй саатуулж буй нөхцөлүүдийн эрэмбэ</span></li>
           <li><span class="check">✓</span><span>6 сэдвийн оноо, сэдэв бүрийн тайлбар</span></li>
-          <li><span class="check">✓</span><span>Таны дур хүсэл аяндаа төрдөг үү, эсвэл эхэлсний дараа төрдөг үү</span></li>
-          <li><span class="check">✓</span><span>Хамтрагчдаа хэлэх 3 бэлэн өгүүлбэр</span></li>
-          <li><span class="check">✓</span><span>Энэ 7 хоногт турших 2 алхам</span></li>
-          <li><span class="check">✓</span><span>30 хоног нээгдэх хувийн холбоос</span></li>
+          <li><span class="check">✓</span><span>Дур хүсэл аяндаа төрдөг эсвэл эхэлсний дараа нэмэгддэг эсэх</span></li>
+          <li><span class="check">✓</span><span>Хамтрагчтайгаа ярилцахад ашиглаж болох 3 өгүүлбэр</span></li>
+          <li><span class="check">✓</span><span>Энэ долоо хоногт туршиж болох 2 бодит алхам</span></li>
+          <li><span class="check">✓</span><span>Тайлангаа 30 хоног дахин нээх хувийн холбоос</span></li>
         </ul>
         <div style="display:flex;align-items:end;justify-content:space-between;gap:12px;flex-wrap:wrap">
-          <div><div class="price">8,900₮</div><div class="small muted">нэг удаагийн төлбөр</div></div>
-          <button class="btn" id="b-start2">Тестээ эхлэх</button>
+          <div><div class="price">8,900₮</div><div class="small muted">нэг удаагийн төлбөр · үнэгүй тестийн дараа</div></div>
+          <button class="btn" id="b-start2">Үнэгүй тестээ эхлэх</button>
         </div>
       </div>
     </div>
@@ -299,11 +306,12 @@ ol.do{margin:0;padding-left:1.2rem;display:grid;gap:10px}
   <div class="narrow" style="display:grid;gap:20px">
     <header class="top"><div class="logo">Асаа<span>гч</span></div><button class="link" data-go="landing">Буцах</button></header>
     <div class="card fade">
-      <h2>Эхлэхийн өмнө</h2>
-      <label class="checkrow" for="c-age"><input type="checkbox" id="c-age"><span>Би 18 нас хүрсэн.</span></label>
-      <label class="checkrow" for="c-terms"><input type="checkbox" id="c-terms"><span>Энэ тест онош биш гэдгийг ойлгож байна. Хариултаа хүссэн үедээ алгасаж болно.</span></label>
-      <p class="small muted">Ганцаараа, тайван газар бөглөхийг зөвлөж байна. Хариултаа үнэнээр нь өгөх тусам үр дүн тань тодорхой гарна.</p>
-      <button class="btn block" id="b-gate" disabled>Асуултууд руу орох</button>
+      <div class="eyebrow">Үнэгүй тест · 24 асуулт · ойролцоогоор 5 минут</div>
+      <h2 id="gate-h" tabindex="-1">Эхлэхийн өмнө нэг баталгаажуулалт</h2>
+      <label class="checkrow" for="c-age"><input type="checkbox" id="c-age" aria-describedby="gate-skip"><span>Би 18 нас хүрсэн бөгөөд энэ тест онош биш гэдгийг ойлгож байна.</span></label>
+      <p class="small muted" id="gate-skip">Хариулахыг хүсэхгүй асуултаа алгасаж болно.</p>
+      <button class="btn block" id="b-gate" disabled aria-describedby="gate-help">1-р асуулт руу орох</button>
+      <p class="help" id="gate-help" role="status">Үргэлжлүүлэхийн тулд 18+ баталгаажуулалтыг сонгоно уу.</p>
     </div>
   </div>
 </section>
@@ -335,10 +343,14 @@ ol.do{margin:0;padding-left:1.2rem;display:grid;gap:10px}
       <p class="obs-pre" id="r-pre"></p>
       <p class="obs" id="r-obs"></p>
     </div>
-    <div style="display:grid;gap:14px">
+    <div class="offerbox" id="r-offer" aria-labelledby="offer-h">
+      <div class="eyebrow">Таны хариултаас гарсан дэлгэрэнгүй тайлан</div>
+      <h2 id="offer-h">Таны сэрлийг юу хөдөлгөж, юу хамгийн түрүүнд зогсоодгийг задлан харна.</h2>
+      <p class="muted">Үнэгүй үр дүн таны ерөнхий хэв маягийг харууллаа. Дэлгэрэнгүй тайлан үүнийг давтахгүй — таны хариултаас хамгийн хүчтэй нөлөөлж буй нөхцөл, саад болон хэрэгжүүлж болох алхмуудыг гаргана.</p>
       <p id="r-count" style="font-weight:600"></p>
       <div class="locked" id="r-locked"></div>
-      <p class="small muted" id="r-paynote"></p>
+      <div class="terms"><span>8,900₮ · Нэг удаагийн төлбөр · QPay · Баталгаажмагц шууд нээгдэнэ</span><span>Захиалга биш. Дахин төлбөр татахгүй.</span></div>
+      <p class="resume" id="r-resume" role="status" hidden></p>
     </div>
     <div class="card" style="gap:12px">
       <p style="font-weight:600">Найздаа илгээх үү?</p>
@@ -348,25 +360,30 @@ ol.do{margin:0;padding-left:1.2rem;display:grid;gap:10px}
   </div>
   <div class="paybar">
     <div class="narrow">
-      <div class="meta"><b>Дэлгэрэнгүй тайлан</b>8,900₮ · QPay</div>
-      <button class="btn" id="b-pay">Тайлангаа нээх</button>
+      <button class="btn" id="b-pay" aria-describedby="pay-meta">Дэлгэрэнгүй тайлангаа нээх — 8,900₮</button>
+      <div class="meta" id="pay-meta">Нэг удаагийн төлбөр · QPay · Баталгаажмагц шууд нээгдэнэ</div>
     </div>
   </div>
 </section>
 
 <!-- ============ 5. QPAY ============ -->
 <div class="modal" id="m-pay" hidden>
-  <div class="sheet fade" role="dialog" aria-modal="true" aria-labelledby="pay-h">
-    <div style="display:flex;justify-content:space-between;align-items:center">
-      <h3 id="pay-h">QPay-ээр төлөх</h3>
-      <button class="link" id="b-payclose">Хаах</button>
+  <div class="sheet fade" role="dialog" aria-modal="true" aria-labelledby="pay-h" aria-describedby="pay-d">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px">
+      <h3 id="pay-h" tabindex="-1">QPay-ээр 8,900₮ төлөөд тайлангаа нээнэ</h3>
+      <button class="link" id="b-payclose" aria-label="Төлбөрийн цонхыг хаах">Хаах</button>
     </div>
+    <p class="small muted" id="pay-d">QR код уншуулах эсвэл банкны аппыг сонгоно уу. QPay төлбөрийг баталгаажуулмагц энэ дэлгэц дээр тайлан автоматаар нээгдэнэ.</p>
     <div class="inv"><span>Нэхэмжлэл <b id="p-no">…</b></span><span>Дүн <b>8,900₮</b></span></div>
-    <div class="qr" id="p-qr"></div>
-    <p class="small muted" style="text-align:center">Банкны аппаараа QR кодыг уншуулна уу, эсвэл утсан дээрээ банкаа сонгоно уу.</p>
+    <div class="qr" id="p-qr" aria-label="QPay QR код"></div>
     <div class="banks" id="p-banks"></div>
-    <div class="status" id="p-status"><span class="spin"></span><span>Төлбөр хүлээж байна…</span></div>
+    <div class="status" id="p-status" role="status" aria-live="polite"><span class="spin"></span><span>Төлбөр хүлээж байна…</span></div>
     <button class="btn ghost block" id="b-check">Төлбөр шалгах</button>
+    <details class="small" style="padding-block:4px;border:0">
+      <summary>Баталгаажуулалт удааширвал яах вэ?</summary>
+      <p>Банкны аппад гүйлгээ амжилттай гэж гарсан бол 30 секунд хүлээгээд «Төлбөр шалгах» товчийг дарна уу. Энэ хуудсыг шинэчлэхгүй байна уу. Цонхоо хаасан ч доорх төлбөрийн товчийг дахин дарахад ижил нэхэмжлэлээр үргэлжилнэ. Дахин төлбөр төлөх шаардлагагүй.</p>
+    </details>
+    <p class="small muted" style="text-align:center">Нэг удаагийн төлбөр. Захиалга биш. Дахин төлбөр татахгүй.</p>
     <div class="demo-note" id="p-demo">Демо горим: бодит төлбөр авахгүй. <button class="link" id="b-demopaid" style="color:inherit">Төлбөр орсон гэж үзэх</button></div>
   </div>
 </div>
@@ -492,21 +509,28 @@ function sendMetrics(row){
   if (!sendMetrics._bound){ sendMetrics._bound = 1; addEventListener("pagehide", flush); document.addEventListener("visibilitychange", ()=>{ if (document.visibilityState==="hidden") flush(); }); }
 }
 const LOG = [];
+/* Шинэ үйл явдлын нэр → хуучин DB нэр. Хяналтын самбар (asaagch_stats) хуучин нэрээр тоолдог тул
+ * DB-д хуучин нэрээр нь, GA/Pixel-д шинэ нэрээр илгээнэ. Нэг үйлдэл = нэг мөр. */
+const DB_NAME = { landing_cta_clicked:"quiz_start_click", consent_completed:"quiz_start", quiz_progress_8:"q8_reached",
+  quiz_progress_16:"q16_reached", quiz_completed:"quiz_complete", paid_offer_viewed:"paywall_view",
+  paid_cta_clicked:"pay_click", purchase_completed:"paid" };
+const ONCE = new Set(); // нэг сесст нэг удаа л илгээх үйл явдлууд
+function trackOnce(ev, data){ if (ONCE.has(ev)) return; ONCE.add(ev); track(ev, data); }
 function track(ev, data={}){
-  sendMetrics({ev, sid:SESS.sid, variant:S.variant, q:data.q, kind:data.kind, n:data.n, src:SESS.src, med:SESS.med, camp:SESS.camp, ref_host:SESS.ref, device:SESS.device});
+  sendMetrics({ev: DB_NAME[ev] || ev, sid:SESS.sid, variant:S.variant, q:data.q, kind:data.kind, n:data.n, src:SESS.src, med:SESS.med, camp:SESS.camp, ref_host:SESS.ref, device:SESS.device});
   if (ev==="q_view" || ev==="q_answer") return; // асуулт бүрийн үйл явдлыг GA/Pixel рүү илгээхгүй
-  const payload = {variant:S.variant, ...data};
+  const payload = {variant:S.variant}; if (data.n!=null) payload.n = data.n; // хариулт, хувийн мэдээлэл огт орохгүй
   LOG.push({ev, ...payload, t:new Date().toTimeString().slice(0,8)});
   try{ if (window.gtag) gtag("event", ev, payload); }catch(e){}
   try{
     if (window.fbq){
-      if (ev==="pay_click") fbq("track","InitiateCheckout",{value:CONFIG.price,currency:"MNT"});
-      else if (ev==="paid") fbq("track","Purchase",{value:CONFIG.price,currency:"MNT"});
-      else if (ev==="quiz_complete") fbq("track","CompleteRegistration");
+      if (ev==="paid_cta_clicked") fbq("track","InitiateCheckout",{value:CONFIG.price,currency:"MNT"});
+      else if (ev==="purchase_completed") fbq("track","Purchase",{value:CONFIG.price,currency:"MNT"});
+      else if (ev==="quiz_completed") fbq("track","CompleteRegistration");
       else fbq("trackCustom", ev, payload);
     }
   }catch(e){}
-  if (ev==="paid"){ try{ if (window.gtag) gtag("event","purchase",{value:CONFIG.price,currency:"MNT",transaction_id:data.ref||""}); }catch(e){} }
+  if (ev==="purchase_completed"){ try{ if (window.gtag) gtag("event","purchase",{value:CONFIG.price,currency:"MNT",transaction_id:data.ref||""}); }catch(e){} }
   const l = document.getElementById("d-log");
   if (l){ l.textContent = LOG.map(p => `${p.t} ${p.ev}${p.n!=null?(" n="+p.n):""}`).join("\n"); l.scrollTop = l.scrollHeight; }
 }
@@ -555,15 +579,16 @@ const SCREENS = ["landing","gate","quiz","result","report"];
 function go(name){
   SCREENS.forEach(s => document.getElementById("s-"+s).hidden = (s!==name));
   window.scrollTo(0,0);
+  if (name==="gate"){ track("consent_viewed"); const h=document.getElementById("gate-h"); h && h.focus({preventScroll:true}); }
   if (name==="quiz") renderQ();
   if (name==="result") renderResult();
 }
 document.querySelectorAll("[data-go]").forEach(b=>b.addEventListener("click",()=>go(b.dataset.go)));
-["b-start","b-start2"].forEach(id=>document.getElementById(id).addEventListener("click",()=>{track("quiz_start_click"); go("gate");}));
-const cAge=document.getElementById("c-age"), cTerms=document.getElementById("c-terms"), bGate=document.getElementById("b-gate");
-function gateOk(){ bGate.disabled = !(cAge.checked && cTerms.checked); }
-cAge.addEventListener("change",gateOk); cTerms.addEventListener("change",gateOk);
-bGate.addEventListener("click",()=>{ track("quiz_start"); S.idx=0; go("quiz"); });
+["b-start","b-start2"].forEach(id=>document.getElementById(id).addEventListener("click",()=>{track("landing_cta_clicked"); go("gate");}));
+const cAge=document.getElementById("c-age"), bGate=document.getElementById("b-gate"), gHelp=document.getElementById("gate-help");
+function gateOk(){ bGate.disabled = !cAge.checked; gHelp.hidden = cAge.checked; }
+cAge.addEventListener("change",gateOk);
+bGate.addEventListener("click",()=>{ if (bGate.disabled) return; track("consent_completed"); S.idx=0; S.started=false; go("quiz"); });
 
 /* ---------- тест ---------- */
 function renderQ(){
@@ -581,6 +606,7 @@ function renderQ(){
       <span class="side"><button class="link" data-v="na">Хамаарахгүй</button><button class="link" data-v="skip">Алгасах</button></span>
     </div>`;
   track("q_view",{q:i+1});
+  if (i===0 && !S.started){ S.started = true; track("quiz_started"); }
   w.querySelectorAll("[data-v]").forEach(b=>b.addEventListener("click",()=>{
     const v = b.dataset.v; S.answers[i] = (v==="na"||v==="skip") ? v : +v;
     track("q_answer",{q:i+1, kind: v==="na"?"na":v==="skip"?"skip":"a"}); // утга биш, зөвхөн төрөл
@@ -590,10 +616,10 @@ function renderQ(){
 }
 function next(){
   const i = S.idx;
-  if (i===7 && !S.shownInter[8]) { S.shownInter[8]=1; track("q8_reached"); return inter(8); }
-  if (i===15 && !S.shownInter[16]) { S.shownInter[16]=1; track("q16_reached"); return inter(16); }
+  if (i===7 && !S.shownInter[8]) { S.shownInter[8]=1; track("quiz_progress_8"); return inter(8); }
+  if (i===15 && !S.shownInter[16]) { S.shownInter[16]=1; track("quiz_progress_16"); return inter(16); }
   if (i < Q.length-1){ S.idx++; renderQ(); }
-  else { track("quiz_complete",{n:conditions().length}); go("result"); }
+  else { if (!S.completed){ S.completed = true; track("quiz_completed",{n:conditions().length}); } go("result"); }
 }
 function inter(at){
   const w = document.getElementById("q-wrap");
@@ -608,7 +634,9 @@ function inter(at){
     big = n>0 ? T("inter16.title",{n}) : T("inter16.none");
     small = T("inter16.sub");
   }
-  w.innerHTML = `<div class="inter fade"><p class="big">${big}</p><p class="muted">${small}</p><button class="btn" id="i-go">Үргэлжлүүлэх</button></div>`;
+  const left = Q.length - at, mins = Math.max(1, Math.ceil(left*12/60));
+  w.innerHTML = `<div class="inter fade"><p class="big" tabindex="-1" id="i-big">${big}</p><p class="muted">${small}</p><p class="small muted">${at} асуулт дууслаа · ${left} асуулт үлдлээ · ойролцоогоор ${mins} минут</p><button class="btn" id="i-go">${at+1}-р асуулт руу орох</button></div>`;
+  document.getElementById("i-big").focus({preventScroll:true});
   document.getElementById("i-go").addEventListener("click",()=>{ S.idx++; renderQ(); });
 }
 
@@ -628,20 +656,32 @@ function renderResult(){
   document.getElementById("r-acc-h").textContent = HINT.acc[lvlKey(a)];
   document.getElementById("r-brk-h").textContent = HINT.brk[lvlKey(b)];
   document.getElementById("r-pre").textContent = T(S.variant==="curious" ? "obs.pre.curious" : "obs.pre.sharp");
-  document.getElementById("r-paynote").textContent = T("paynote");
   document.getElementById("r-obs").textContent = observation();
   const c = conditions(), n = c.length;
   document.getElementById("r-count").textContent = n>0 ? T("count.some",{n}) : T("count.none");
   const items = [
-    ...c.slice(0,4).map(o=>({blur:o.q.s})),
-    {txt:T("locked.top_brake")},
-    {txt:T("locked.desire_type")},
-    {txt:T("locked.sentences")},
-    {txt:T("locked.steps")}
+    ...c.slice(0,3).map(o=>({blur:o.q.s})),
+    ...OFFER_ITEMS.map(txt=>({txt}))
   ];
   document.getElementById("r-locked").innerHTML = items.map(it=>
-    `<div class="lock"><span class="ic" aria-hidden="true">🔒</span>${it.blur?`<span class="blur" aria-label="Түгжээтэй нөхцөл">${it.blur}</span>`:`<span>${it.txt}</span>`}</div>`).join("");
-  track("paywall_view",{n});
+    `<div class="lock"><span class="ic" aria-hidden="true">🔒</span>${it.blur?`<span class="blur" role="img" aria-label="Түгжээтэй нөхцөл"><span aria-hidden="true">${esc(it.blur)}</span></span>`:`<span>${it.txt}</span>`}</div>`).join("");
+  updateResume();
+  trackOnce("paid_offer_viewed",{n});
+}
+const OFFER_ITEMS = [
+  "Сэрлийг хамгийн хүчтэй саатуулж буй нөхцөлүүдийн эрэмбэ",
+  "Дур хүсэл аяндаа төрдөг эсвэл эхэлсний дараа нэмэгддэг эсэх",
+  "Хамтрагчтайгаа ярилцахад ашиглаж болох 3 өгүүлбэр",
+  "Энэ долоо хоногт туршиж болох 2 бодит алхам",
+  "Тайлангаа 30 хоног дахин нээх хувийн холбоос"
+];
+/* Төлбөрийн цонхыг хаасан ч нэхэмжлэл хүчинтэй бол хэрхэн үргэлжлүүлэхийг харуулна */
+function updateResume(){
+  const el = document.getElementById("r-resume"); if (!el) return;
+  const live = S.invoice && !S.paid && Date.now()-S.invoice.at < INV_TTL;
+  el.hidden = !live;
+  if (live) el.textContent = "Төлбөрөө хийсэн бол «Төлбөрөө үргэлжлүүлэх» товчийг дарна уу. Ижил нэхэмжлэлээр шалгах тул дахин төлөх шаардлагагүй.";
+  document.getElementById("b-pay").textContent = live ? "Төлбөрөө үргэлжлүүлэх — 8,900₮" : "Дэлгэрэнгүй тайлангаа нээх — 8,900₮";
 }
 document.getElementById("b-share").addEventListener("click",async()=>{
   const url = location.origin && location.origin.startsWith("http") ? location.origin + "/?utm_source=share" : location.href.split("#")[0];
@@ -650,21 +690,41 @@ document.getElementById("b-share").addEventListener("click",async()=>{
   track("share_copy");
 });
 
-/* ---------- QPay ---------- */
+/* ---------- QPay ----------
+ * Төлөвүүд: loading (нэхэмжлэл үүсгэж байна) → pending (хүлээж байна) → paid (тайлан нээгдэнэ)
+ *           error (дараагийн алхмыг хэлнэ) · expired (хүлээх хугацаа дууссан). QPay/сервер логик өөрчлөгдөөгүй. */
 const BANKS = ["Хаан банк","Голомт","ХХБ","Төрийн банк","Хас банк","Капитрон","М банк","SocialPay","Монпэй"];
-const mPay = document.getElementById("m-pay");
-let pollT=null, pollStart=0, lastManual=0;
-document.getElementById("b-pay").addEventListener("click", openPay);
+const INV_TTL = 20*60*1000; // нэг нэхэмжлэлийг дахин ашиглах хугацаа (өмнөхтэй ижил)
+const mPay = document.getElementById("m-pay"), bCheck = document.getElementById("b-check");
+let pollT=null, pollStart=0, lastManual=0, payState="idle", lastFocus=null;
+document.getElementById("b-pay").addEventListener("click", ()=>{ track("paid_cta_clicked"); openPay(); });
 document.getElementById("b-payclose").addEventListener("click", closePay);
-document.getElementById("b-check").addEventListener("click", ()=>checkPay(true));
+bCheck.addEventListener("click", ()=>{ if (payState==="invfail") openPay(true); else checkPay(true); });
 document.getElementById("b-demopaid").addEventListener("click", ()=>onPaid());
+/* модал: фокусыг дотор нь барих, Esc-ээр хаах, хаахад өмнөх товч руу буцаах */
+mPay.addEventListener("keydown", e=>{
+  if (e.key==="Escape"){ e.preventDefault(); closePay(); return; }
+  if (e.key!=="Tab") return;
+  const f = [...mPay.querySelectorAll('button:not([disabled]),a[href],summary,[tabindex]:not([tabindex="-1"])')].filter(x=>x.offsetParent!==null);
+  if (!f.length) return;
+  const first=f[0], last=f[f.length-1];
+  if (e.shiftKey && (document.activeElement===first || !mPay.contains(document.activeElement))){ e.preventDefault(); last.focus(); }
+  else if (!e.shiftKey && document.activeElement===last){ e.preventDefault(); first.focus(); }
+});
+function setInert(on){ SCREENS.forEach(x=>{ const el=document.getElementById("s-"+x); if (on) el.setAttribute("inert",""); else el.removeAttribute("inert"); }); }
 
-async function openPay(){
-  track("pay_click");
-  mPay.hidden = false;
+async function openPay(retry){
+  if (mPay.hidden){ lastFocus = document.activeElement; mPay.hidden = false; setInert(true); document.getElementById("pay-h").focus(); track("payment_modal_opened"); }
   document.getElementById("p-demo").hidden = CONFIG.mode!=="demo";
-  if (S.invoice && Date.now()-S.invoice.at < 20*60*1000){ startPolling(); return; } // нэг нэхэмжлэлийг дахин ашиглана
-  setStatus("wait","Нэхэмжлэл үүсгэж байна…");
+  if (!retry && S.invoice && Date.now()-S.invoice.at < INV_TTL){ startPolling(); checkPay(false); return; } // нэг нэхэмжлэлийг дахин ашиглана
+  /* хуучирсан нэхэмжлэлээр төлсөн байж магадгүй тул шинийг үүсгэхээс өмнө нэг шалгана */
+  if (!retry && S.invoice && CONFIG.mode!=="demo"){
+    setState("loading","Өмнөх нэхэмжлэлийг шалгаж байна…");
+    try{ const r = await fetch(`${CONFIG.apiBase}/qpay/check/${encodeURIComponent(S.invoice.invoice_id)}?verify=1`); const d = await r.json(); if (d.paid) return onPaid(); }catch(e){}
+  }
+  S.invoice = null;
+  setState("loading","Нэхэмжлэл үүсгэж байна…");
+  document.getElementById("p-no").textContent = "…";
   document.getElementById("p-qr").innerHTML = ""; document.getElementById("p-banks").innerHTML = "";
   try{
     const inv = await createInvoice(); inv.at = Date.now(); S.invoice = inv;
@@ -674,18 +734,31 @@ async function openPay(){
     else if (window.QRCode){ new QRCode(qr,{text:inv.qr_text,width:192,height:192,colorDark:"#1B1219",colorLight:"#ffffff"}); }
     const urls = inv.urls && inv.urls.length ? inv.urls : BANKS.map(n=>({name:n, link:null}));
     document.getElementById("p-banks").innerHTML = urls.map(u=> u.link
-      ? `<a class="bank" href="${u.link}" rel="noopener" style="color:inherit;text-decoration:none">${u.description||u.name}</a>`
-      : `<span class="bank">${u.name}</span>`).join("");
+      ? `<a class="bank" href="${esc(u.link)}" rel="noopener" style="color:inherit;text-decoration:none">${esc(u.description||u.name)}</a>`
+      : `<span class="bank">${esc(u.name)}</span>`).join("");
     track("invoice_created");
     startPolling();
-  }catch(e){ setStatus("err","Нэхэмжлэл үүсгэж чадсангүй. Хэсэг хүлээгээд дахин оролдоно уу."); }
+  }catch(e){ track("payment_failed",{n:1}); setState("invfail","Нэхэмжлэл үүсгэж чадсангүй. Сүлжээгээ шалгаад «Дахин оролдох» товчийг дарна уу."); }
 }
 function startPolling(){
-  setStatus("wait","Төлбөр хүлээж байна…");
+  setState("pending","Төлбөр хүлээж байна…");
   pollStart = Date.now(); clearInterval(pollT); pollT = setInterval(()=>checkPay(false), CONFIG.pollMs);
 }
-function closePay(){ mPay.hidden = true; clearInterval(pollT); track("pay_close"); }
-function setStatus(kind, text){ document.getElementById("p-status").innerHTML = (kind==="wait"?'<span class="spin"></span>':"") + `<span>${text}</span>`; }
+function closePay(){
+  if (mPay.hidden) return;
+  mPay.hidden = true; setInert(false); clearInterval(pollT); track("pay_close");
+  updateResume();
+  const b = document.getElementById("b-pay");
+  (lastFocus && document.contains(lastFocus) && !lastFocus.closest("[hidden]") ? lastFocus : b).focus();
+}
+function setState(kind, text){
+  payState = kind;
+  const spin = kind==="loading" || kind==="pending";
+  document.getElementById("p-status").innerHTML = (spin?'<span class="spin" aria-hidden="true"></span>':"") + `<span>${text}</span>`;
+  document.getElementById("p-status").style.color = (kind==="error"||kind==="invfail"||kind==="expired") ? "var(--warn)" : kind==="paid" ? "var(--ok)" : "";
+  bCheck.textContent = kind==="invfail" ? "Дахин оролдох" : "Төлбөр шалгах";
+  bCheck.disabled = kind==="loading" || kind==="paid";
+}
 async function createInvoice(){
   const ref = "AS" + Date.now().toString(36).toUpperCase() + Math.random().toString(36).slice(2,6).toUpperCase();
   if (CONFIG.mode==="demo") return {ref, invoice_id:"demo-"+ref, qr_text:"DEMO-QPAY-"+ref, urls:[]};
@@ -695,22 +768,30 @@ async function createInvoice(){
 }
 /* Хуудас манай серверээс төлөвийг асууна (сервер QPay-ээс давтан асуудаггүй).
  * «Төлбөр шалгах» товч дарахад сервер QPay-ээс нэг удаа шалгана. */
-async function checkPay(manual){
-  if (!S.invoice) return;
-  if (!manual && Date.now()-pollStart > CONFIG.pollMaxMs){ clearInterval(pollT); setStatus("err","Төлсөн бол «Төлбөр шалгах» товчийг дарна уу."); return; }
-  if (CONFIG.mode==="demo"){ if (manual) setStatus("wait","Төлбөр одоогоор ороогүй байна…"); return; }
-  if (manual){ if (Date.now()-lastManual < 5000) return; lastManual = Date.now(); setStatus("wait","Шалгаж байна…"); }
+async function checkPay(manual, quiet){
+  if (!S.invoice || S.paid) return;
+  if (!manual && Date.now()-pollStart > CONFIG.pollMaxMs){
+    clearInterval(pollT);
+    setState("expired","10 минутын дотор төлбөр бүртгэгдсэнгүй. Төлсөн бол «Төлбөр шалгах» товчийг дарна уу. Төлөөгүй бол цонхоо хаагаад дахин нээнэ үү.");
+    return;
+  }
+  if (CONFIG.mode==="demo"){ if (manual) setState("pending","Төлбөр одоогоор бүртгэгдээгүй байна. Банкны аппад гүйлгээ амжилттай болсон бол 30 секунд хүлээгээд дахин шалгана уу."); return; }
+  if (manual){ if (Date.now()-lastManual < 5000) return; lastManual = Date.now(); setState("pending","Шалгаж байна…"); }
   try{
     const r = await fetch(`${CONFIG.apiBase}/qpay/check/${encodeURIComponent(S.invoice.invoice_id)}${manual?"?verify=1":""}`);
+    if (!r.ok) throw new Error("check");
     const d = await r.json();
-    if (d.paid) onPaid(); else if (manual) setStatus("wait","Төлбөр одоогоор ороогүй байна. Төлсөн бол хэдэн секунд хүлээнэ үү…");
-  }catch(e){ if (manual) setStatus("err","Шалгаж чадсангүй. Дахин оролдоно уу."); }
+    if (d.paid) onPaid();
+    else if (manual) setState("pending","Төлбөр одоогоор бүртгэгдээгүй байна. Банкны аппад гүйлгээ амжилттай болсон бол 30 секунд хүлээгээд дахин шалгана уу.");
+  }catch(e){
+    if (manual){ track("payment_failed",{n:2}); setState("error","Төлбөрийн мэдээллийг шалгаж чадсангүй. Сүлжээгээ шалгаад «Төлбөр шалгах» товчийг дахин дарна уу."); }
+  }
 }
 async function onPaid(){
   if (S.paid) return;
   clearInterval(pollT); S.paid = true;
-  track("paid",{ref:S.invoice&&S.invoice.ref});
-  setStatus("ok","Төлбөр орлоо. Тайлан нээгдэж байна…");
+  if (!S.purchased){ S.purchased = true; track("purchase_completed",{ref:S.invoice&&S.invoice.ref}); } // зөвхөн сервер баталгаажуулсны дараа, нэг удаа
+  setState("paid","Төлбөр баталгаажлаа. Тайлан нээгдэж байна…");
   try{
     const summary = buildSummary();
     let data;
@@ -721,8 +802,8 @@ async function onPaid(){
       if (!r.ok) throw new Error("report"); data = await r.json();
     }
     if (data.token) store.set("report_token", data.token);
-    mPay.hidden = true; renderReport(data);
-  }catch(e){ S.paid=false; setStatus("err","Тайланг ачаалж чадсангүй. «Төлбөр шалгах» товчийг дахин дарна уу."); }
+    mPay.hidden = true; setInert(false); renderReport(data);
+  }catch(e){ S.paid=false; track("payment_failed",{n:3}); setState("error","Төлбөр баталгаажсан ч тайланг ачаалж чадсангүй. Сүлжээгээ шалгаад «Төлбөр шалгах» товчийг дахин дарна уу. Дахин төлөх шаардлагагүй."); }
 }
 
 /* ---------- дэлгэрэнгүй тайлан ---------- */
@@ -779,7 +860,7 @@ function renderReport({content:C, summary:M, token}){
     const r = await fetch(`${CONFIG.apiBase}/report/${encodeURIComponent(token)}`);
     if (!r.ok) throw new Error();
     const d = await r.json(); S.paid = true; track("report_reopen"); renderReport({...d, token});
-  }catch(e){ toast("Тайлангийн холбоосын хугацаа дууссан эсвэл буруу байна."); }
+  }catch(e){ toast("Тайлангийн холбоос хүчингүй байна. Холбоосоо бүтнээр нь хуулж дахин нээнэ үү."); }
 })();
 
 /* ---------- туслах ---------- */
@@ -801,7 +882,7 @@ document.getElementById("d-var").addEventListener("click",()=>{
   if (!document.getElementById("s-result").hidden) renderResult();
 });
 document.getElementById("d-reset").addEventListener("click",()=>{
-  S.answers=Array(Q.length).fill(null); S.idx=0; S.paid=false; S.invoice=null; S.shownInter={}; cAge.checked=cTerms.checked=false; gateOk(); go("landing");
+  S.answers=Array(Q.length).fill(null); S.idx=0; S.paid=false; S.invoice=null; S.shownInter={}; cAge.checked=false; gateOk(); S.started=S.completed=S.purchased=false; ONCE.clear(); go("landing");
 });
 
 (function(){ let r=null; try{ r = new URLSearchParams(location.search).get("r"); }catch(e){} if (!r) track("landing_view"); })();
