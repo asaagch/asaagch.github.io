@@ -1,4 +1,4 @@
-<!doctype html><html lang="mn"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><script>window.__CFG__={mode:"live",api:"https://uqjoeplhqoccrdaddlyh.supabase.co/functions/v1/api",metrics:"https://uqjoeplhqoccrdaddlyh.supabase.co/functions/v1/m",ga4:"",ver:"20261011-0e72cf8",pixel:"1799831074598533"}</script><title>Асаагч тест</title>
+<!doctype html><html lang="mn"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><script>window.__CFG__={mode:"live",api:"https://uqjoeplhqoccrdaddlyh.supabase.co/functions/v1/api",metrics:"https://uqjoeplhqoccrdaddlyh.supabase.co/functions/v1/m",ga4:"",ver:"20261011-2cd6221",pixel:"1799831074598533"}</script><title>Асаагч тест</title>
 <meta name="description" content="Таны сэрэл яагаад унтардаг вэ? 24 асуулт, 5 минут. Юу таныг асааж, юу унтраадгийг олоорой. 18+.">
 <meta property="og:title" content="Таны сэрэл яагаад унтардаг вэ?">
 <meta property="og:description" content="24 асуулт, 5 минут. Юу таныг асааж, юу унтраадгийг олоорой. 18+.">
@@ -215,6 +215,7 @@ ol.do{margin:0;padding-left:1.2rem;display:grid;gap:10px}
       <div class="logo">Асаа<span>гч</span></div>
       <div class="pill">18+ · бүртгэлгүй</div>
     </header>
+    <p class="paynote small" id="l-safari" hidden style="margin:0 0 4px">Facebook-ийн доторх хөтчөөр орсон байна. Төлбөр хялбар байлгахын тулд <a id="l-safari-a" href="#" style="color:inherit;font-weight:700">Safari-д нээх →</a></p>
 
     <div class="hero">
       <div>
@@ -425,7 +426,7 @@ ol.do{margin:0;padding-left:1.2rem;display:grid;gap:10px}
     <div class="paynote small" id="p-inapp" hidden>Facebook, Messenger-ийн доторх хөтчөөс банкны апп нээгдэхгүй байх тохиолдол бий. Нээгдэхгүй бол доорх <b>«QR-ээр төлөх»</b> аргыг ашиглана уу.</div>
     <div id="p-qrbox"><div class="qr" id="p-qr" aria-label="QPay QR код"></div></div>
     <div class="paynote small" id="p-fallback" hidden role="status">
-      <b>Банкны апп нээгдсэнгүй юу? QR-ээр төлөөрэй:</b>
+      <b id="p-fb-h">Банкны апп нээгдсэнгүй юу? QR-ээр төлөөрэй:</b>
       <ol style="margin:6px 0 0;padding-left:20px">
         <li>Дээрх QR кодыг <b>дэлгэцийн зураг (screenshot)</b> болгож хадгална.</li>
         <li>Банкны аппаа өөрөө нээгээд <b>QR уншуулах → Зургаас</b> гэж сонгоно.</li>
@@ -946,6 +947,19 @@ bShowQr.addEventListener("click", ()=>{ const open = qrBox.hidden; qrBox.hidden 
 /* Facebook/Messenger/Instagram-ийн доторх хөтөч: банкны апп руу шилжих холбоос (deep link) заримдаа ажилладаггүй */
 const UA_ = navigator.userAgent || "";
 const IN_APP = /FBAN|FBAV|FB_IAB|FBIOS|FB4A|Messenger|Instagram|Line\/|KAKAOTALK|TikTok|BytedanceWebview/i.test(UA_);
+const IS_IOS = /iPhone|iPad|iPod/i.test(UA_), IS_ANDROID = /Android/i.test(UA_);
+/* iPhone + Facebook хөтөч: тест эхлэхээс өмнө (ямар ч хариултгүй үед) Safari-д нээхийг санал болгоно.
+ * Холбоосонд зөвхөн нүүр хуудасны хаяг ба utm байна — хариулт, үр дүн хэзээ ч орохгүй. */
+(function(){
+  const box = document.getElementById("l-safari"); if (!box || !(IN_APP && IS_IOS)) return;
+  const q = new URLSearchParams(location.search), keep = new URLSearchParams();
+  ["utm_source","utm_medium","utm_campaign","utm_content","fbclid"].forEach(k=>{ if (q.get(k)) keep.set(k, q.get(k)); });
+  keep.set("from_inapp","1");
+  document.getElementById("l-safari-a").href = "x-safari-https://" + location.host + location.pathname + "?" + keep.toString();
+  box.hidden = false;
+  document.getElementById("l-safari-a").addEventListener("click", ()=>track("open_safari_click"));
+})();
+if (new URLSearchParams(location.search).get("from_inapp")==="1" && !IN_APP) trackOnce("safari_arrived");
 const pFallback = document.getElementById("p-fallback"), bMore = document.getElementById("b-morebanks");
 function showQrFallback(){
   if (!pFallback.hidden) return;
@@ -971,6 +985,13 @@ document.getElementById("p-banks").addEventListener("click", e=>{
 /* Банкнуудын дараалал: түгээмэл банкууд эхэнд, бусад нь «Бусад банк» товчны ард */
 const BANK_TOP = [/^(khan|хаан)/i, /^(golomt|голомт)/i, /^(tdb|trade|худалдаа)/i, /^(xac|хас)/i, /^(state|төрийн)/i, /^qpay/i];
 const BANK_SHOW = 6;
+/* Android + Facebook хөтөч: «scheme://...» холбоосыг «intent://...#Intent;scheme=...;end» болгоно — хөтөч апп руу шилжүүлэхийг зөвшөөрдөг */
+function bankHref(l){
+  if (!(IN_APP && IS_ANDROID)) return l;
+  const m = /^([a-z][a-z0-9+.\-]*):\/\/(.*)$/i.exec(String(l||""));
+  if (!m || /^(https?|intent)$/i.test(m[1])) return l;
+  return `intent://${m[2]}#Intent;scheme=${m[1]};end`;
+}
 function bankRank(u){ const n = String(u.name||"").trim(), d = String(u.description||"").trim(); const i = BANK_TOP.findIndex(r=>r.test(n) || r.test(d)); return i<0 ? 99 : i; }
 bMore.addEventListener("click", ()=>{
   const open = bMore.getAttribute("aria-expanded")!=="true";
@@ -985,7 +1006,13 @@ function layoutPay(hasLinks){
   const mob = IS_MOB && hasLinks;
   qrBox.hidden = mob; bShowQr.hidden = !mob; bShowQr.setAttribute("aria-expanded","false");
   bShowQr.textContent = IN_APP ? "QR-ээр төлөх (банкны апп нээгдэхгүй бол)" : "Өөр төхөөрөмжөөр уншуулах QR код харуулах";
-  document.getElementById("p-inapp").hidden = !(mob && IN_APP);
+  document.getElementById("p-inapp").hidden = !(mob && IN_APP && !IS_IOS);
+  if (mob && IN_APP && IS_IOS){ // iPhone-ий Facebook хөтчөөс банкны апп нээгддэггүй нь батлагдсан → QR-ийг шууд эхэнд
+    qrBox.hidden = false; bShowQr.hidden = true; pFallback.hidden = false;
+    document.getElementById("p-fb-h").textContent = "Facebook-ийн хөтчөөс QR-ээр төлөх нь найдвартай:";
+    banksH.textContent = "Эсвэл банкны аппаа сонгоно уу (нээгдэхгүй байж болно)";
+    trackOnce("qr_fallback_shown", {}, "qrfb-"+(S.invoice && S.invoice.ref));
+  }
   banksH.textContent = mob ? "Банкны аппаа сонгоно уу" : "Эсвэл утсан дээрээ банкны аппаа сонгоно уу";
   document.getElementById("pay-d").textContent = mob
     ? "Банкны аппаа сонгоод төлбөрөө баталгаажуулна уу. Энэ хуудас руу буцаж ирэхэд тайлан автоматаар нээгдэнэ."
@@ -1011,6 +1038,7 @@ function clearInvoiceView(){
   document.getElementById("p-qr").innerHTML = ""; document.getElementById("p-banks").innerHTML = "";
   qrBox.hidden = true; bShowQr.hidden = true; banksH.hidden = true;
   bMore.hidden = true; pFallback.hidden = true; document.getElementById("p-inapp").hidden = true;
+  document.getElementById("p-fb-h").textContent = "Банкны апп нээгдсэнгүй юу? QR-ээр төлөөрэй:";
 }
 function drawInvoice(inv){
   banksH.hidden = false;
@@ -1027,7 +1055,7 @@ function drawInvoice(inv){
   document.getElementById("p-banks").innerHTML = urls.map((u,i)=>{
     const cls = "bank" + (extra && i>=BANK_SHOW ? " extra" : ""), hid = extra && i>=BANK_SHOW ? " hidden" : "";
     return u.link
-      ? `<a class="${cls}"${hid} href="${esc(u.link)}" rel="noopener" style="color:inherit;text-decoration:none">${safeLogo(u.logo)?`<img src="${esc(u.logo)}" alt="" loading="lazy" onerror="this.remove()">`:""}<span>${esc(u.description||u.name)}</span></a>`
+      ? `<a class="${cls}"${hid} href="${esc(bankHref(u.link))}" rel="noopener" style="color:inherit;text-decoration:none">${safeLogo(u.logo)?`<img src="${esc(u.logo)}" alt="" loading="lazy" onerror="this.remove()">`:""}<span>${esc(u.description||u.name)}</span></a>`
       : `<span class="${cls}"${hid}>${esc(u.name)}</span>`;
   }).join("");
   bMore.hidden = !extra; bMore.setAttribute("aria-expanded","false");
