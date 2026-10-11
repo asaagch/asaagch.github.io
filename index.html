@@ -1,4 +1,4 @@
-<!doctype html><html lang="mn"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><script>window.__CFG__={mode:"live",api:"https://uqjoeplhqoccrdaddlyh.supabase.co/functions/v1/api",metrics:"https://uqjoeplhqoccrdaddlyh.supabase.co/functions/v1/m",ga4:"",ver:"20261011-2cd6221",pixel:"1799831074598533"}</script><title>Асаагч тест</title>
+<!doctype html><html lang="mn"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><script>window.__CFG__={mode:"live",api:"https://uqjoeplhqoccrdaddlyh.supabase.co/functions/v1/api",metrics:"https://uqjoeplhqoccrdaddlyh.supabase.co/functions/v1/m",ga4:"",ver:"20261011-6568663",pixel:"1799831074598533"}</script><title>Асаагч тест</title>
 <meta name="description" content="Таны сэрэл яагаад унтардаг вэ? 24 асуулт, 5 минут. Юу таныг асааж, юу унтраадгийг олоорой. 18+.">
 <meta property="og:title" content="Таны сэрэл яагаад унтардаг вэ?">
 <meta property="og:description" content="24 асуулт, 5 минут. Юу таныг асааж, юу унтраадгийг олоорой. 18+.">
@@ -215,7 +215,6 @@ ol.do{margin:0;padding-left:1.2rem;display:grid;gap:10px}
       <div class="logo">Асаа<span>гч</span></div>
       <div class="pill">18+ · бүртгэлгүй</div>
     </header>
-    <p class="paynote small" id="l-safari" hidden style="margin:0 0 4px">Facebook-ийн доторх хөтчөөр орсон байна. Төлбөр хялбар байлгахын тулд <a id="l-safari-a" href="#" style="color:inherit;font-weight:700">Safari-д нээх →</a></p>
 
     <div class="hero">
       <div>
@@ -948,18 +947,7 @@ bShowQr.addEventListener("click", ()=>{ const open = qrBox.hidden; qrBox.hidden 
 const UA_ = navigator.userAgent || "";
 const IN_APP = /FBAN|FBAV|FB_IAB|FBIOS|FB4A|Messenger|Instagram|Line\/|KAKAOTALK|TikTok|BytedanceWebview/i.test(UA_);
 const IS_IOS = /iPhone|iPad|iPod/i.test(UA_), IS_ANDROID = /Android/i.test(UA_);
-/* iPhone + Facebook хөтөч: тест эхлэхээс өмнө (ямар ч хариултгүй үед) Safari-д нээхийг санал болгоно.
- * Холбоосонд зөвхөн нүүр хуудасны хаяг ба utm байна — хариулт, үр дүн хэзээ ч орохгүй. */
-(function(){
-  const box = document.getElementById("l-safari"); if (!box || !(IN_APP && IS_IOS)) return;
-  const q = new URLSearchParams(location.search), keep = new URLSearchParams();
-  ["utm_source","utm_medium","utm_campaign","utm_content","fbclid"].forEach(k=>{ if (q.get(k)) keep.set(k, q.get(k)); });
-  keep.set("from_inapp","1");
-  document.getElementById("l-safari-a").href = "x-safari-https://" + location.host + location.pathname + "?" + keep.toString();
-  box.hidden = false;
-  document.getElementById("l-safari-a").addEventListener("click", ()=>track("open_safari_click"));
-})();
-if (new URLSearchParams(location.search).get("from_inapp")==="1" && !IN_APP) trackOnce("safari_arrived");
+/* x-safari-https:// холбоосыг Messenger-ийн хөтөч хаадаг нь батлагдсан (2026-10-11) тул нүүрэнд Safari санал болгохгүй; iPhone дээр QR арга гол зам. */
 const pFallback = document.getElementById("p-fallback"), bMore = document.getElementById("b-morebanks");
 function showQrFallback(){
   if (!pFallback.hidden) return;
