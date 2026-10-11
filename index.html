@@ -1,4 +1,4 @@
-<!doctype html><html lang="mn"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><script>window.__CFG__={mode:"live",api:"https://uqjoeplhqoccrdaddlyh.supabase.co/functions/v1/api",metrics:"https://uqjoeplhqoccrdaddlyh.supabase.co/functions/v1/m",ga4:"",ver:"20261009-dea79bf",pixel:"1799831074598533"}</script><title>Асаагч тест</title>
+<!doctype html><html lang="mn"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><script>window.__CFG__={mode:"live",api:"https://uqjoeplhqoccrdaddlyh.supabase.co/functions/v1/api",metrics:"https://uqjoeplhqoccrdaddlyh.supabase.co/functions/v1/m",ga4:"",ver:"20261011-0e72cf8",pixel:"1799831074598533"}</script><title>Асаагч тест</title>
 <meta name="description" content="Таны сэрэл яагаад унтардаг вэ? 24 асуулт, 5 минут. Юу таныг асааж, юу унтраадгийг олоорой. 18+.">
 <meta property="og:title" content="Таны сэрэл яагаад унтардаг вэ?">
 <meta property="og:description" content="24 асуулт, 5 минут. Юу таныг асааж, юу унтраадгийг олоорой. 18+.">
@@ -164,6 +164,8 @@ footer{padding-block:40px 60px;border-top:1px solid var(--line);color:var(--mute
 .banks{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
 .bank{background:var(--surface-2);border:1px solid var(--line);border-radius:12px;padding:.6rem .35rem;font-size:.78rem;line-height:1.2;text-align:center;min-height:64px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px}
 a.bank:active{border-color:var(--ember)}
+.paynote{background:rgba(242,135,107,.10);border:1px solid rgba(242,135,107,.35);border-radius:14px;padding:10px 12px;line-height:1.45}
+.banks .bank.extra[hidden]{display:none}
 .bank img{width:30px;height:30px;border-radius:8px;object-fit:contain;background:#fff}
 .q1card{margin-top:22px;background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:18px;display:grid;gap:10px}
 .q1card .q1text{font-family:var(--display);font-size:clamp(1.35rem,5vw,1.6rem);font-weight:600;line-height:1.2}
@@ -379,7 +381,7 @@ ol.do{margin:0;padding-left:1.2rem;display:grid;gap:10px}
       <p class="small" id="r-offer-partial" style="color:var(--warn)" hidden></p>
       <p id="r-count" style="font-weight:600"></p>
       <div class="locked" id="r-locked"></div>
-      <div class="terms"><span>8,900₮ · Нэг удаагийн төлбөр · QPay · Баталгаажмагц шууд нээгдэнэ</span><span>Сарын эрх биш — дахин төлбөр татагдахгүй. Тайлангаа 30 хоног холбоосоор дахин нээнэ.</span></div>
+      <div class="terms"><span>8,900₮ · Нэг удаагийн төлбөр · QPay · Баталгаажмагц шууд нээгдэнэ</span><span>🔒 Банкны хуулганд зөвхөн гүйлгээний код харагдана. Хариултын тань утга серверт илгээгдэхгүй.</span><span>Сарын эрх биш — дахин төлбөр татагдахгүй. Тайлангаа 30 хоног холбоосоор дахин нээнэ.</span></div>
       <button class="btn ghost small" data-sample="offer" style="justify-self:start">Тайлангийн жишээ үзэх</button>
       <p class="resume" id="r-resume" role="status" hidden></p>
     </div>
@@ -419,9 +421,20 @@ ol.do{margin:0;padding-left:1.2rem;display:grid;gap:10px}
     </div>
     <p class="small muted" id="pay-d">QR код уншуулах эсвэл банкны аппыг сонгоно уу. QPay төлбөрийг баталгаажуулмагц энэ дэлгэц дээр тайлан автоматаар нээгдэнэ.</p>
     <div class="inv"><span>Нэхэмжлэл <b id="p-no">…</b></span><span>Дүн <b>8,900₮</b></span></div>
+    <p class="small muted" style="margin:0">🔒 Банкны хуулганд зөвхөн гүйлгээний код харагдана.</p>
+    <div class="paynote small" id="p-inapp" hidden>Facebook, Messenger-ийн доторх хөтчөөс банкны апп нээгдэхгүй байх тохиолдол бий. Нээгдэхгүй бол доорх <b>«QR-ээр төлөх»</b> аргыг ашиглана уу.</div>
     <div id="p-qrbox"><div class="qr" id="p-qr" aria-label="QPay QR код"></div></div>
+    <div class="paynote small" id="p-fallback" hidden role="status">
+      <b>Банкны апп нээгдсэнгүй юу? QR-ээр төлөөрэй:</b>
+      <ol style="margin:6px 0 0;padding-left:20px">
+        <li>Дээрх QR кодыг <b>дэлгэцийн зураг (screenshot)</b> болгож хадгална.</li>
+        <li>Банкны аппаа өөрөө нээгээд <b>QR уншуулах → Зургаас</b> гэж сонгоно.</li>
+        <li>Төлсний дараа энэ хуудас руу буцаж ирэхэд тайлан нээгдэнэ.</li>
+      </ol>
+    </div>
     <p class="small" id="p-banks-h" style="font-weight:600">Банкны аппаа сонгоно уу</p>
     <div class="banks" id="p-banks"></div>
+    <button class="link small" id="b-morebanks" hidden aria-expanded="false" aria-controls="p-banks"></button>
     <button class="link small" id="b-showqr" hidden aria-expanded="false" aria-controls="p-qrbox">Өөр төхөөрөмжөөр уншуулах QR код харуулах</button>
     <div class="status" id="p-status" role="status" aria-live="polite"><span class="spin"></span><span>Төлбөр хүлээж байна…</span></div>
     <button class="btn ghost block" id="b-check">Төлбөр шалгах</button>
@@ -929,15 +942,50 @@ bCheck.addEventListener("click", ()=>{
 document.getElementById("b-demopaid").addEventListener("click", ()=>onPaid());
 const IS_MOB = SESS.device==="mobile";
 const qrBox = document.getElementById("p-qrbox"), bShowQr = document.getElementById("b-showqr"), banksH = document.getElementById("p-banks-h");
-bShowQr.addEventListener("click", ()=>{ const open = qrBox.hidden; qrBox.hidden = !open; bShowQr.setAttribute("aria-expanded", String(open)); bShowQr.textContent = open ? "QR кодыг нуух" : "Өөр төхөөрөмжөөр уншуулах QR код харуулах"; });
-document.getElementById("p-banks").addEventListener("click", e=>{ if (e.target.closest("a.bank")) track("bank_app_opened"); });
+bShowQr.addEventListener("click", ()=>{ const open = qrBox.hidden; qrBox.hidden = !open; bShowQr.setAttribute("aria-expanded", String(open)); bShowQr.textContent = open ? "QR кодыг нуух" : (IN_APP ? "QR-ээр төлөх (банкны апп нээгдэхгүй бол)" : "Өөр төхөөрөмжөөр уншуулах QR код харуулах"); if (open && IN_APP){ pFallback.hidden = false; track("qr_fallback_shown"); } });
+/* Facebook/Messenger/Instagram-ийн доторх хөтөч: банкны апп руу шилжих холбоос (deep link) заримдаа ажилладаггүй */
+const UA_ = navigator.userAgent || "";
+const IN_APP = /FBAN|FBAV|FB_IAB|FBIOS|FB4A|Messenger|Instagram|Line\/|KAKAOTALK|TikTok|BytedanceWebview/i.test(UA_);
+const pFallback = document.getElementById("p-fallback"), bMore = document.getElementById("b-morebanks");
+function showQrFallback(){
+  if (!pFallback.hidden) return;
+  qrBox.hidden = false; bShowQr.hidden = true; pFallback.hidden = false;
+  track("qr_fallback_shown");
+  pFallback.scrollIntoView({block:"nearest", behavior:"smooth"});
+}
+/* Банк дарсны дараа 2.5 секундэд хуудас нуугдаагүй бол апп нээгдээгүй гэж үзээд QR аргыг санал болгоно */
+let bankWatch = null;
+document.getElementById("p-banks").addEventListener("click", e=>{
+  if (!e.target.closest("a.bank")) return;
+  track("bank_app_opened"); // = банкны товч дарсан (апп нээгдсэн эсэхийг доорх хоёр үйл явдал ялгана)
+  clearTimeout(bankWatch); let left = false;
+  const onHide = ()=>{ if (document.visibilityState==="hidden") left = true; };
+  document.addEventListener("visibilitychange", onHide, {once:true});
+  addEventListener("pagehide", ()=>{ left = true; }, {once:true});
+  bankWatch = setTimeout(()=>{
+    document.removeEventListener("visibilitychange", onHide);
+    if (left) { track("bank_app_switched"); return; }
+    if (document.visibilityState==="visible" && !mPay.hidden && !S.paid){ track("bank_app_failed"); showQrFallback(); }
+  }, 2500);
+});
+/* Банкнуудын дараалал: түгээмэл банкууд эхэнд, бусад нь «Бусад банк» товчны ард */
+const BANK_TOP = [/^(khan|хаан)/i, /^(golomt|голомт)/i, /^(tdb|trade|худалдаа)/i, /^(xac|хас)/i, /^(state|төрийн)/i, /^qpay/i];
+const BANK_SHOW = 6;
+function bankRank(u){ const n = String(u.name||"").trim(), d = String(u.description||"").trim(); const i = BANK_TOP.findIndex(r=>r.test(n) || r.test(d)); return i<0 ? 99 : i; }
+bMore.addEventListener("click", ()=>{
+  const open = bMore.getAttribute("aria-expanded")!=="true";
+  document.querySelectorAll("#p-banks .bank.extra").forEach(x=>x.hidden = !open);
+  bMore.setAttribute("aria-expanded", String(open));
+  bMore.textContent = open ? "Бусад банкыг нуух" : bMore.dataset.label;
+});
 /* банкны аппаас буцаж ирэхэд (хуудас дахин ачаалагдаагүй бол) төлбөрийг шууд шалгана */
 document.addEventListener("visibilitychange", ()=>{ if (document.visibilityState==="visible" && !mPay.hidden && S.invoice && !S.paid && payState==="pending") setTimeout(()=>checkPay(true), 600); });
 /* утсан дээр: банкны апп эхэнд, QR нугалагдсан; компьютер дээр QR эхэнд */
 function layoutPay(hasLinks){
   const mob = IS_MOB && hasLinks;
   qrBox.hidden = mob; bShowQr.hidden = !mob; bShowQr.setAttribute("aria-expanded","false");
-  bShowQr.textContent = "Өөр төхөөрөмжөөр уншуулах QR код харуулах";
+  bShowQr.textContent = IN_APP ? "QR-ээр төлөх (банкны апп нээгдэхгүй бол)" : "Өөр төхөөрөмжөөр уншуулах QR код харуулах";
+  document.getElementById("p-inapp").hidden = !(mob && IN_APP);
   banksH.textContent = mob ? "Банкны аппаа сонгоно уу" : "Эсвэл утсан дээрээ банкны аппаа сонгоно уу";
   document.getElementById("pay-d").textContent = mob
     ? "Банкны аппаа сонгоод төлбөрөө баталгаажуулна уу. Энэ хуудас руу буцаж ирэхэд тайлан автоматаар нээгдэнэ."
@@ -962,6 +1010,7 @@ function clearInvoiceView(){
   document.getElementById("p-no").textContent = "…";
   document.getElementById("p-qr").innerHTML = ""; document.getElementById("p-banks").innerHTML = "";
   qrBox.hidden = true; bShowQr.hidden = true; banksH.hidden = true;
+  bMore.hidden = true; pFallback.hidden = true; document.getElementById("p-inapp").hidden = true;
 }
 function drawInvoice(inv){
   banksH.hidden = false;
@@ -971,11 +1020,19 @@ function drawInvoice(inv){
   const libQR = ()=>{ if (window.QRCode && inv.qr_text){ try{ new QRCode(qr,{text:inv.qr_text,width:192,height:192,colorDark:"#1B1219",colorLight:"#ffffff"}); return true; }catch(e){} } return false; };
   if (inv.qr_image){ const img = new Image(); img.alt = "QPay QR код"; img.onerror = ()=>{ img.remove(); if (!libQR()) qrFail(); }; img.src = "data:image/png;base64,"+inv.qr_image; qr.appendChild(img); }
   else if (!libQR()) qrFail();
-  const urls = inv.urls && inv.urls.length ? inv.urls : BANKS.map(n=>({name:n, link:null}));
+  const urls0 = inv.urls && inv.urls.length ? inv.urls : BANKS.map(n=>({name:n, link:null}));
+  const urls = urls0.map((u,i)=>({u,i,r:bankRank(u)})).sort((a,b)=>a.r-b.r || a.i-b.i).map(x=>x.u);
   const safeLogo = l => typeof l==="string" && /^https:\/\//.test(l) ? l : "";
-  document.getElementById("p-banks").innerHTML = urls.map(u=> u.link
-    ? `<a class="bank" href="${esc(u.link)}" rel="noopener" style="color:inherit;text-decoration:none">${safeLogo(u.logo)?`<img src="${esc(u.logo)}" alt="" loading="lazy" onerror="this.remove()">`:""}<span>${esc(u.description||u.name)}</span></a>`
-    : `<span class="bank">${esc(u.name)}</span>`).join("");
+  const extra = urls.length > BANK_SHOW + 1;
+  document.getElementById("p-banks").innerHTML = urls.map((u,i)=>{
+    const cls = "bank" + (extra && i>=BANK_SHOW ? " extra" : ""), hid = extra && i>=BANK_SHOW ? " hidden" : "";
+    return u.link
+      ? `<a class="${cls}"${hid} href="${esc(u.link)}" rel="noopener" style="color:inherit;text-decoration:none">${safeLogo(u.logo)?`<img src="${esc(u.logo)}" alt="" loading="lazy" onerror="this.remove()">`:""}<span>${esc(u.description||u.name)}</span></a>`
+      : `<span class="${cls}"${hid}>${esc(u.name)}</span>`;
+  }).join("");
+  bMore.hidden = !extra; bMore.setAttribute("aria-expanded","false");
+  bMore.dataset.label = `Бусад банк, апп (${urls.length - BANK_SHOW}) ▾`; bMore.textContent = bMore.dataset.label;
+  pFallback.hidden = true;
   layoutPay(urls.some(u=>u.link));
 }
 /* Серверээс нэг удаа: true / false / "missing" (серверт байхгүй) / null (сүлжээ, серверийн алдаа — төлөөгүй гэж ҮЗЭХГҮЙ) */
